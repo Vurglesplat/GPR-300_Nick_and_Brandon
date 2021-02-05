@@ -31,6 +31,7 @@
 //-----------------------------------------------------------------------------
 
 #include "../a3_DemoState.h"
+#include <math.h>
 
 
 // OpenGL
@@ -198,6 +199,15 @@ void a3demo_renderTest(a3_DemoState const* demoState, a3f64 const dt)
 	// set viewport
 	glViewport(-demoState->frameBorder, -demoState->frameBorder, demoState->frameWidth, demoState->frameHeight);
 
+	const GLfloat color[] = { (float)sin(demoState->timer_display->totalTime) * 0.5f + 0.5f,
+								(float)cos(demoState->timer_display->totalTime) * 0.5f + 0.5f,
+								0.0f, 1.0f };    
+	glClearBufferfv(GL_COLOR, 0, color);
+	
+	// Use the program object we created earlier for rendering    
+	glUseProgram(demoState->rendering_program);
+	// Draw one point    
+	glDrawArrays(GL_POINTS, 0, 1);
 	// ****TO-DO: render scene here
 	//	-> implement "render" from tutorial
 
@@ -214,6 +224,9 @@ void a3demo_render(a3_DemoState const* demoState, a3f64 const dt)
 
 	a3demo_renderTest(demoState, dt);
 
+
+	
+	
 	// text
 /*	if (demoState->textInit)
 	{
