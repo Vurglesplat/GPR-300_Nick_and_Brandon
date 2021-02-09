@@ -353,11 +353,13 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	sharedVertexStorage += a3geometryGenerateDrawable(currentDrawable, proceduralShapesData + 6, vao, vbo_ibo, sceneCommonIndexFormat, 0, 0);
 	//...
 
-	// ****TO-DO: 
+	// ****DONE: 
 	//	-> implement the remaining vertex array format from scratch
 	//		-> the teapot is the only drawable that uses it; use the above examples to guide you
-/*	vao = demoState->vao_tangentbasis_texcoord;
-	//...*/
+	vao = demoState->vao_tangentbasis_texcoord;
+	currentDrawable = demoState->draw_teapot;
+	sharedVertexStorage += a3geometryGenerateDrawable(currentDrawable, loadedModelsData + 0, vao, vbo_ibo, sceneCommonIndexFormat, 0, 0);
+	
 
 
 	// release data when done
