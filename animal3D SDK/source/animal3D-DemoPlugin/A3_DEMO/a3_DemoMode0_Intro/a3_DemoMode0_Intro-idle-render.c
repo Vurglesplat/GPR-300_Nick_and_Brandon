@@ -277,10 +277,10 @@ void a3intro_render(a3_DemoState const* demoState, a3_DemoMode0_Intro const* dem
 			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, modelViewProjectionMat.mm);
 
 			//	-> send solid color (not a matrix)
-			
 			//modelViewProjectionMat = currentSceneObject->modelMatrixStackPtr->modelViewProjectionMat;
 			//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uColor, 1, currentSceneObject->sceneHierarchyIndex);
-			//a3shaderUniformSendFloat(a3unif_single, currentSceneObject->sceneHierarchyIndex , hueCount, currentDemoProgram->uColor);
+			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1 , rgba4[i].v); ///I OR J???
+			//a3demo_drawModelSolidColor(modelViewProjectionMat.m, viewProjectionMat.m, modelMat.m, demoState->prog_drawColorUnif, drawable[j], rgba4[i].v);
 
 			break;
 		}
