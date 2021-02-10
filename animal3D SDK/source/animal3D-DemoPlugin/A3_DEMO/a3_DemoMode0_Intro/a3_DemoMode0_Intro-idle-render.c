@@ -264,6 +264,11 @@ void a3intro_render(a3_DemoState const* demoState, a3_DemoMode0_Intro const* dem
 			//	-> send "normal matrix": the inverse-transpose of the model-view matrix
 			//		(hint: the correct uniform location is in the shader header)
 
+			a3mat4 tempMat;
+			a3demo_quickInverseTranspose_internal(&(tempMat.mm), modelViewMat.m);
+
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMV_nrm, 1, tempMat.mm);
+
 		case intro_renderModeTexture:
 			// activate diffuse map, fall through to solid color
 			// ****DONE: 
@@ -281,7 +286,7 @@ void a3intro_render(a3_DemoState const* demoState, a3_DemoMode0_Intro const* dem
 			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1 , rgba4[i].v); 
 			break;
 		}
-		// ****TO-DO: 
+		// ****DONE: 
 		//	-> uncomment render call
 		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
 		a3vertexDrawableActivateAndRender(drawable[j]);
