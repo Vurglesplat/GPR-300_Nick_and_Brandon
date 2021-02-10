@@ -262,14 +262,10 @@ void a3intro_render(a3_DemoState const* demoState, a3_DemoMode0_Intro const* dem
 			// send lights and matrices, fall through to texturing
 			modelViewMat = currentSceneObject->modelMatrixStackPtr->modelViewMat;
 			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMV, 1, modelViewMat.mm);
-			// ****TO-DO: 
+			// ****DONE: 
 			//	-> send "normal matrix": the inverse-transpose of the model-view matrix
 			//		(hint: the correct uniform location is in the shader header)
-
-			a3mat4 tempMat;
-			//a3real4x4GetInverse(&(tempMat.mm), &(modelViewMat.mm));
-			a3demo_quickInverseTranspose_internal(&(tempMat.mm), &(modelViewMat.mm));
-			a3shaderUniformSendFloatMat(a3unif_mat4, 1, currentDemoProgram->uMV_nrm, 1, tempMat.mm);
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMV_nrm, 1, currentSceneObject->modelMatrixStackPtr->modelViewMatInverseTranspose.mm);
 
 
 		case intro_renderModeTexture:
