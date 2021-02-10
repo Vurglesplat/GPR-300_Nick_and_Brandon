@@ -570,7 +570,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 
 
 
-	// ****TO-DO: 
+	// ****DONE: 
 	//	-> uncomment program linking and validation
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
