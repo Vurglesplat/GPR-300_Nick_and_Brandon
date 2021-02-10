@@ -28,6 +28,8 @@
 
 //-----------------------------------------------------------------------------
 
+#include <stdio.h>
+
 #include "../a3_DemoMode0_Intro.h"
 
 //typedef struct a3_DemoState a3_DemoState;
@@ -265,9 +267,10 @@ void a3intro_render(a3_DemoState const* demoState, a3_DemoMode0_Intro const* dem
 			//		(hint: the correct uniform location is in the shader header)
 
 			a3mat4 tempMat;
-			a3demo_quickInverseTranspose_internal(&(tempMat.mm), modelViewMat.m);
+			//a3real4x4GetInverse(&(tempMat.mm), &(modelViewMat.mm));
+			a3demo_quickInverseTranspose_internal(&(tempMat.mm), &(modelViewMat.mm));
+			a3shaderUniformSendFloatMat(a3unif_mat4, 1, currentDemoProgram->uMV_nrm, 1, tempMat.mm);
 
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMV_nrm, 1, tempMat.mm);
 
 		case intro_renderModeTexture:
 			// activate diffuse map, fall through to solid color
