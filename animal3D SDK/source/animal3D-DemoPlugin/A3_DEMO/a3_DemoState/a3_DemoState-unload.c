@@ -65,11 +65,11 @@ void a3demo_unloadShaders(a3_DemoState* demoState)
 {
 	// ****TO-DO: 
 	//	-> uncomment shader program unloading algorithm
-/*	a3_DemoStateShaderProgram* currentProg = demoState->shaderProgram,
+	a3_DemoStateShaderProgram* currentProg = demoState->shaderProgram,
 		* const endProg = currentProg + demoStateMaxCount_shaderProgram;
 
 	while (currentProg < endProg)
-		a3shaderProgramRelease((currentProg++)->program);*/
+		a3shaderProgramRelease((currentProg++)->program);
 }
 
 

@@ -507,7 +507,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 
 	// ****TO-DO: 
 	//	-> uncomment base program setup
-/*	// base programs: 
+	// base programs: 
 	// transform-only program
 	currentDemoProg = demoState->prog_transform;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:transform");
@@ -547,19 +547,21 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tb-inst");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTangentBasis_gs->shader);
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);*/
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
-	// ****TO-DO: 
+	// ****TO-DO:   - (Nick should probably verify) 
 	//	-> set up missing shader programs, using hints above: 
 	//		-> texturing, Lambert and Phong
-/*	// 00-common programs: 
+	// 00-common programs: 
 	// texturing
 	currentDemoProg = demoState->prog_drawTexture;
-	//...
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex");
 	// Lambert
-	//...
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLambert_fs ->shader);
+	// unsure if/which attributes may need to be attached with it like the ones above
 	// Phong
-	//...*/
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_fs->shader);
+
 
 
 	// ****TO-DO: 
