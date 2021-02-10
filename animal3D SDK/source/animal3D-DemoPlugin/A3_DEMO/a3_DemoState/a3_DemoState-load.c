@@ -602,9 +602,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	}
 
 
-	// ****TO-DO: 
+	// ****DONE: 
 	//	-> uncomment uniform setup and default value assignment
-/*	// prepare uniforms algorithmically instead of manually for all programs
+	// prepare uniforms algorithmically instead of manually for all programs
 	// get uniform and uniform block locations and set default values for all 
 	//	programs that have a uniform that will either never change or is
 	//	consistent for all programs
@@ -661,7 +661,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		// ****TO-DO: 
 		//	-> set lighting uniform and block handles and defaults
 
-	}*/
+	}
 
 
 	// ****LATER
