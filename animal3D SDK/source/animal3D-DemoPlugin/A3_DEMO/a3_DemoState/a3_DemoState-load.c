@@ -103,14 +103,14 @@ a3real4x4r a3demo_setAtlasTransform_internal(a3real4x4p m_out,
 // initialize dummy drawable
 inline void a3demo_initDummyDrawable_internal(a3_DemoState *demoState)
 {
-	// ****TO-DO: 
+	// ****DONE: 
 	//	-> uncomment
-/*	// dummy drawable for point drawing: copy any of the existing ones, 
+	// dummy drawable for point drawing: copy any of the existing ones, 
 	//	set vertex count to 1 and primitive to points (0x0000)
 	// DO NOT RELEASE THIS DRAWABLE; it is a managed stand-in!!!
 	*demoState->dummyDrawable = *demoState->draw_grid;
 	demoState->dummyDrawable->primitive = 0;
-	demoState->dummyDrawable->count = 1;*/
+	demoState->dummyDrawable->count = 1;
 }
 
 
