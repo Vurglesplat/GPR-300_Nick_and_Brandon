@@ -357,6 +357,7 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	//	-> implement the remaining vertex array format from scratch
 	//		-> the teapot is the only drawable that uses it; use the above examples to guide you
 	vao = demoState->vao_tangentbasis_texcoord;
+	a3geometryGenerateVertexArray(vao, "vao:tan+tc", loadedModelsData + 0, vbo_ibo, sharedVertexStorage);
 	currentDrawable = demoState->draw_teapot;
 	sharedVertexStorage += a3geometryGenerateDrawable(currentDrawable, loadedModelsData + 0, vao, vbo_ibo, sceneCommonIndexFormat, 0, 0);
 	
