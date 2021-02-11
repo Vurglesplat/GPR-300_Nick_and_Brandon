@@ -56,7 +56,11 @@ void main()
 	vec4 N = normalize(vNormal);
 	vec4 L = uLightPos - vPosition;
 	float lightDistance = length(L);
-	L = L/lightDistance; //This normalizes L WITHOUT using the normalize function, which would have called length() again
+	L = L/lightDistance; //This normalizes L WITHOUT using the normalize function
+						 // which would have called length() again, and we are using it later for attenuation
+	
+	
+	
 	float lmbCoeff = dot(N, L);
 
 	rtFragColor = vec4(lmbCoeff,lmbCoeff,lmbCoeff,1.0) * tex * uColor; // this is grayscale based on the lmbCoeff value
