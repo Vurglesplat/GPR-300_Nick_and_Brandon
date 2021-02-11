@@ -24,22 +24,26 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****DONE: 
 //	-> start with same items as "../passthru_transform_vs4x"
 //	-> declare texture coordinate attribute
 //		(hint: location is 8, use most appropriate type)
 //	-> declare texture coordinate varying
 //	-> assign attribute to varying
+uniform mat4 uMVP;
 
 layout (location = 0) in vec4 aPosition;
+layout (location = 8) in vec2 aTexCoord;
 
 flat out int vVertexID;
 flat out int vInstanceID;
 
+out vec2 vTexCoord;
+
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	vTexCoord = aTexCoord;
+	gl_Position = uMVP * aPosition;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
