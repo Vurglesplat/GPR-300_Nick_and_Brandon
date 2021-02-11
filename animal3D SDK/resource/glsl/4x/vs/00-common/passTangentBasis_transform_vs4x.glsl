@@ -40,11 +40,6 @@ uniform mat4 uMV;
 uniform mat4 uMV_nrm;
 uniform mat4 uP;
 
-// uniforms for lighting
-//uniform vec4 ulPosition;
-//uniform vec4 ulColor;
-//uniform float ulRadius;
-
 layout (location = 0) in vec4 aPosition;
 layout (location = 2) in vec3 aNormal;
 layout (location = 8) in vec2 aTexCoord;

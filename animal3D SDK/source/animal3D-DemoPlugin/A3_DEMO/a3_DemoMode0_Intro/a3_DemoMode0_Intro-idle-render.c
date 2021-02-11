@@ -238,8 +238,8 @@ void a3intro_render(a3_DemoState const* demoState, a3_DemoMode0_Intro const* dem
 	// ****DONE: 
 	//	-> send lighting uniforms and bind blocks where appropriate
 	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightPos, 1, demoMode->pointLightData->position.v);
-	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->ulColor, 1, demoMode->pointLightData->color.v);
-	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->ulRadius, 1, &demoMode->pointLightData->radius);
+	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightColor, 1, demoMode->pointLightData->color.v);
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightInvRadiusSqr, 1, &demoMode->pointLightData->radiusInvSq);
 
 	// select pipeline algorithm
 	glDisable(GL_BLEND);

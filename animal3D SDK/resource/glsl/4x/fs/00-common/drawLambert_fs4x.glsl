@@ -24,20 +24,20 @@
 
 #version 450
 
-// ****TO-DO: 
-//	-> declare varyings to receive lighting and shading variables
+// ****DONE: 
+//	x-> declare varyings to receive lighting and shading variables
 //	x-> declare lighting uniforms
 //		(hint: in the render routine, consolidate lighting data 
 //		into arrays; read them here as arrays)
 //	x-> calculate Lambertian coefficient
-//	-> implement Lambertian shading model and assign to output
+//	x-> implement Lambertian shading model and assign to output
 //		(hint: coefficient * attenuation * light color * surface color)
-//	-> implement for multiple lights
+//	x-> implement for multiple lights
 //		(hint: there is another uniform for light count)
 
 uniform vec4 uLightPos; 
-uniform vec4 ulColor;
-uniform float ulRadius;
+uniform vec4 uLightColor;
+uniform float uLightInvRadiusSqr;
 
 uniform sampler2D uTex_dm;
 uniform vec4 uColor; 
@@ -62,8 +62,8 @@ void main()
 	
 	
 	float lmbCoeff = dot(N, L);
-	float attenuation = mix(1.0,0.0,lightDistance/(ulRadius*ulRadius));
+	float attenuation = mix(1.0,0.0,lightDistance * uLightInvRadiusSqr); // light intensity is based on distance relative to radius
 
-	vec4 result = tex * uColor * ulColor * lmbCoeff * attenuation;
+	vec4 result = tex * uColor * uLightColor * lmbCoeff * attenuation;
 	rtFragColor = vec4(result.rgb,1.0); // this is grayscale based on the lmbCoeff value
 }
