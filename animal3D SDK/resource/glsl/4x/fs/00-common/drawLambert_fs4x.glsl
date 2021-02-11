@@ -24,21 +24,46 @@
 
 #version 450
 
-// ****TO-DO: 
-//	-> declare varyings to receive lighting and shading variables
-//	-> declare lighting uniforms
+// ****DONE: 
+//	x-> declare varyings to receive lighting and shading variables
+//	x-> declare lighting uniforms
 //		(hint: in the render routine, consolidate lighting data 
 //		into arrays; read them here as arrays)
-//	-> calculate Lambertian coefficient
-//	-> implement Lambertian shading model and assign to output
+//	x-> calculate Lambertian coefficient
+//	x-> implement Lambertian shading model and assign to output
 //		(hint: coefficient * attenuation * light color * surface color)
-//	-> implement for multiple lights
+//	x-> implement for multiple lights
 //		(hint: there is another uniform for light count)
+
+uniform vec4 uLightPos; 
+uniform vec4 uLightColor;
+uniform float uLightInvRadiusSqr;
+
+uniform sampler2D uTex_dm;
+uniform vec4 uColor; 
+
 
 layout (location = 0) out vec4 rtFragColor;
 
+in vec4 vNormal;
+in vec4 vPosition;
+in vec2 vTexCoord; 
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE LIME
-	rtFragColor = vec4(0.5, 1.0, 0.0, 1.0);
+ 	vec4 tex = texture(uTex_dm, vTexCoord); 
+
+	vec4 N = normalize(vNormal);
+	vec4 L = uLightPos - vPosition;
+	float lightDistance = length(L);
+	L = L/lightDistance; //This normalizes L WITHOUT using the normalize function
+						 // which would have called length() again, and we are using it later for attenuation
+	
+	
+	
+	float lmbCoeff = dot(N, L);
+	float attenuation = mix(1.0,0.0,lightDistance * uLightInvRadiusSqr); // light intensity is based on distance relative to radius
+
+	vec4 result = tex * uColor * uLightColor * lmbCoeff * attenuation;
+	rtFragColor = vec4(result.rgb,1.0); // this is grayscale based on the lmbCoeff value
 }
