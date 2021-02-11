@@ -65,5 +65,5 @@ void main()
 	float attenuation = mix(1.0,0.0,lightDistance * uLightInvRadiusSqr); // light intensity is based on distance relative to radius
 
 	vec4 result = tex * uColor * uLightColor * lmbCoeff * attenuation;
-	rtFragColor = vec4(result.rgb,1.0); // this is grayscale based on the lmbCoeff value
+	rtFragColor = vec4(result.rgb,1.0);
 }
