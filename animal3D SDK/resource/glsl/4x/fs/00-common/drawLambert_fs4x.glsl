@@ -37,8 +37,23 @@
 
 layout (location = 0) out vec4 rtFragColor;
 
+in vec4 vNormal;    // is a unit vector and perpendicular to the face, it is also an attribute 
+				   //(this varying needs to be written in the vertex shader in passTangentBasis_transform)
+in vec4 vPosition;
+
+uniform vec4 uLightPos; // YOU HAVE TO MAKE SURE THAT THIS IS IN CAMERA SPACE IN
+						// IN THE CPU
+
+
+uniform vec4 ulPosition;
+uniform vec4 ulColor;
+uniform float ulRadius;
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE LIME
-	rtFragColor = vec4(0.5, 1.0, 0.0, 1.0);
+	vec4 N = normalize(vNormal);
+	vec4 L = normalize(uLightPos - vPosition); // the lighting, this is the angle after the light bounces off the surface
+	float kd = dot(N, L);
+
+	rtFragColor = vec4(kd,kd,kd,1.0); // this is grayscale based on the kd value
 }
