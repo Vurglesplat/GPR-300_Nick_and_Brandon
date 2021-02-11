@@ -30,7 +30,6 @@
 //	-> assign uniform directly to output
 
 uniform vec4 uColor;
-uniform sampler2D uWhat;
 
 layout (location = 0) out vec4 rtFragColor;
 
