@@ -62,6 +62,8 @@ void main()
 	
 	
 	float lmbCoeff = dot(N, L);
+	float attenuation = mix(1.0,0.0,lightDistance/(ulRadius*ulRadius));
 
-	rtFragColor = vec4(lmbCoeff,lmbCoeff,lmbCoeff,1.0) * tex * uColor; // this is grayscale based on the lmbCoeff value
+	vec4 result = tex * uColor * ulColor * lmbCoeff * attenuation;
+	rtFragColor = vec4(result.rgb,1.0); // this is grayscale based on the lmbCoeff value
 }
