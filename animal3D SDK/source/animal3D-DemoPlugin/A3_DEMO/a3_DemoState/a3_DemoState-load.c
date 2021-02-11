@@ -466,7 +466,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// gs
 			// 00-common
 			{ { { 0 },	"shdr-gs:draw-tb",					a3shader_geometry,	2,{ A3_DEMO_GS"00-common/e/drawTangentBasis_gs4x.glsl",
-																					A3_DEMO_GS"00-common/e/utilCommon_gs4x.glsl",} } },
+																					A3_DEMO_GS"00-common/utilCommon_gs4x.glsl",} } },
 
 			// fs
 			// base
@@ -475,9 +475,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 00-common
 			{ { { 0 },	"shdr-fs:draw-tex",					a3shader_fragment,	1,{ A3_DEMO_FS"00-common/drawTexture_fs4x.glsl" } } },// ****DECODE
 			{ { { 0 },	"shdr-fs:draw-Lambert",				a3shader_fragment,	2,{ A3_DEMO_FS"00-common/drawLambert_fs4x.glsl",// ****DECODE
-																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },// ****DECODE
+																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },// ****DECODE
 			{ { { 0 },	"shdr-fs:draw-Phong",				a3shader_fragment,	2,{ A3_DEMO_FS"00-common/e/drawPhong_fs4x.glsl",// ****DECODE
-																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },// ****DECODE
+																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },// ****DECODE
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -661,7 +661,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 
 		// ****DONE: 
 		//	-> set lighting uniform and block handles and defaults
-		a3demo_setUniformDefaultVec4(currentDemoProg, ulPosition, a3vec4_one.v);
+		a3demo_setUniformDefaultVec4(currentDemoProg, uLightPos, a3vec4_one.v);
 		a3demo_setUniformDefaultVec4(currentDemoProg, ulColor, a3vec4_one.v);
 		a3demo_setUniformDefaultFloat(currentDemoProg, ulRadius, defaultFloat);
 	}

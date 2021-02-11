@@ -45,7 +45,6 @@ uniform vec4 uLightPos; // YOU HAVE TO MAKE SURE THAT THIS IS IN CAMERA SPACE IN
 						// IN THE CPU
 
 
-uniform vec4 ulPosition;
 uniform vec4 ulColor;
 uniform float ulRadius;
 

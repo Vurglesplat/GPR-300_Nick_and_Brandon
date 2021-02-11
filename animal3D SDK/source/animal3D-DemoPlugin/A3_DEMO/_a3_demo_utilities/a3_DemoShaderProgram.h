@@ -98,7 +98,7 @@ extern "C"
 		// lighting block
 		struct {
 			a3i32
-				ulPosition,		//light's position (in view space)
+				uLightPos,		//light's position (in view space)
 				ulColor,		//light's color
 				ulRadius;		//light's radius
 		};

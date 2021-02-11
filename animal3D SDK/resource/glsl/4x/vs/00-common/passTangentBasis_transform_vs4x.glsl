@@ -57,9 +57,9 @@ out vec4 vPosition;
 
 out vec2 vTexCoord;
 
-//out vec4 vlPostion;
-//out vec4 vlColor;
-//out float vlRadius;
+out vec4 vlPostion;
+out vec4 vlColor;
+out float vlRadius;
 
 void main()
 {
@@ -68,6 +68,7 @@ void main()
 	vNormal = uMV_nrm * vec4(aNormal, 0.0);
 
 	gl_Position = uP * vPosition;
+
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
