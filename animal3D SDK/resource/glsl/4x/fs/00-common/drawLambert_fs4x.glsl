@@ -26,33 +26,38 @@
 
 // ****TO-DO: 
 //	-> declare varyings to receive lighting and shading variables
-//	-> declare lighting uniforms
+//	x-> declare lighting uniforms
 //		(hint: in the render routine, consolidate lighting data 
 //		into arrays; read them here as arrays)
-//	-> calculate Lambertian coefficient
+//	x-> calculate Lambertian coefficient
 //	-> implement Lambertian shading model and assign to output
 //		(hint: coefficient * attenuation * light color * surface color)
 //	-> implement for multiple lights
 //		(hint: there is another uniform for light count)
 
-layout (location = 0) out vec4 rtFragColor;
-
-in vec4 vNormal;    // is a unit vector and perpendicular to the face, it is also an attribute 
-				   //(this varying needs to be written in the vertex shader in passTangentBasis_transform)
-in vec4 vPosition;
-
-uniform vec4 uLightPos; // YOU HAVE TO MAKE SURE THAT THIS IS IN CAMERA SPACE IN
-						// IN THE CPU
-
-
+uniform vec4 uLightPos; 
 uniform vec4 ulColor;
 uniform float ulRadius;
 
+uniform sampler2D uTex_dm;
+uniform vec4 uColor; 
+
+
+layout (location = 0) out vec4 rtFragColor;
+
+in vec4 vNormal;
+in vec4 vPosition;
+in vec2 vTexCoord; 
+
 void main()
 {
-	vec4 N = normalize(vNormal);
-	vec4 L = normalize(uLightPos - vPosition); // the lighting, this is the angle after the light bounces off the surface
-	float kd = dot(N, L);
+ 	vec4 tex = texture(uTex_dm, vTexCoord); 
 
-	rtFragColor = vec4(kd,kd,kd,1.0); // this is grayscale based on the kd value
+	vec4 N = normalize(vNormal);
+	vec4 L = uLightPos - vPosition;
+	float lightDistance = length(L);
+	L = L/lightDistance; //This normalizes L WITHOUT using the normalize function, which would have called length() again
+	float lmbCoeff = dot(N, L);
+
+	rtFragColor = vec4(lmbCoeff,lmbCoeff,lmbCoeff,1.0) * tex * uColor; // this is grayscale based on the lmbCoeff value
 }
