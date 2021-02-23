@@ -48,11 +48,45 @@ flat out int vVertexID;
 flat out int vInstanceID;
 
 uniform int uIndex;
+// both of these are copied over from the environments definition
+// matrix stack for a viewer object
+struct sProjectorMatrixStack
+{
+	mat4 projectionMat;					// projection matrix (viewer -> clip)
+	mat4 projectionMatInverse;			// projection inverse matrix (clip -> viewer)
+	mat4 projectionBiasMat;				// projection-bias matrix (viewer -> biased clip)
+	mat4 projectionBiasMatInverse;		// projection-bias inverse matrix (biased clip -> viewer)
+	mat4 viewProjectionMat;				// view-projection matrix (world -> clip)
+	mat4 viewProjectionMatInverse;		// view-projection inverse matrix (clip -> world)
+	mat4 viewProjectionBiasMat;			// view projection-bias matrix (world -> biased clip)
+	mat4 viewProjectionBiasMatInverse;	// view-projection-bias inverse matrix (biased clip -> world)
+};
+
+// matrix stack for a single scene object/model
+struct sModelMatrixStack
+{
+	mat4 modelMat;						// model matrix (object -> world)
+	mat4 modelMatInverse;				// model inverse matrix (world -> object)
+	mat4 modelMatInverseTranspose;		// model inverse-transpose matrix (object -> world skewed)
+	mat4 modelViewMat;					// model-view matrix (object -> viewer)
+	mat4 modelViewMatInverse;			// model-view inverse matrix (viewer -> object)
+	mat4 modelViewMatInverseTranspose;	// model-view inverse transpose matrix (object -> viewer skewed)
+	mat4 modelViewProjectionMat;		// model-view-projection matrix (object -> clip)
+	mat4 atlasMat;						// atlas matrix (texture -> cell)
+};
+
+uniform ubTransformStack 
+{
+	sProjectorMatrixStack uCameraMatrixStack, uLightMatrixStack;
+	sModelMatrixStack uModelMatrixStack[16];  //you can verify this number by checking the definition within the environemtn
+};
 
 void main()
 {
 	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	gl_Position = uCameraMatrixStack.projectionMat * 
+		uModelMatrixStack[uIndex].modelViewMat *
+		aPosition;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;

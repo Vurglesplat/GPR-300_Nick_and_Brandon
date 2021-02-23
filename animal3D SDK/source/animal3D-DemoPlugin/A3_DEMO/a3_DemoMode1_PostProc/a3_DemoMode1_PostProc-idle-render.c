@@ -230,15 +230,28 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 		1,
 	};
 
-	// ****TO-DO:
+	// ****DONE:
 	//	-> uncomment FBO target array
 	//	-> add pointer to target FBO for each pass
 	//		(hint: choose the most relevant one for each; all are unique)
-/*	// framebuffer target for each pass
+	// framebuffer target for each pass
 	const a3_Framebuffer* writeFBO[postproc_renderPass_max] = {
-		demoState->fbo_d32,
-		//...
-	};*/
+		demoState->fbo_d32,						//shadow pass
+		demoState->fbo_c16x4_d24s8,				//scene
+		demoState->fbo_c16_szHalf + 0,			// bright half
+		demoState->fbo_c16_szHalf + 1,			// blur Horizontal half
+		demoState->fbo_c16_szHalf + 2,			// blur Vert half
+
+		demoState->fbo_c16_szQuarter + 0,		// bright quarter
+		demoState->fbo_c16_szQuarter + 1,		// blur Horizontal quarter
+		demoState->fbo_c16_szQuarter + 2,		// blur Vert quarter
+
+		demoState->fbo_c16_szEighth + 0,		// bright eighth
+		demoState->fbo_c16_szEighth + 1,		// blur Horizontal eighth
+		demoState->fbo_c16_szEighth + 2,		// blur Vert eighth
+
+		demoState->fbo_c16x4					// composition
+	};
 
 	// target info
 	a3_DemoMode1_PostProc_RenderMode const renderMode = demoMode->renderMode;
@@ -261,7 +274,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	};
 
 	// pixel size and effect axis
-	//a3vec2 pixelSize = a3vec2_one;
+	a3vec2 pixelSize = a3vec2_one;
 
 
 	//-------------------------------------------------------------------------
@@ -271,11 +284,11 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	//		- clear depth buffer
 	//		- render shapes using pass-thru shaders
 
-	// ****TO-DO:
+	// ****DONE:
 	//	-> uncomment shadow pass FBO binding
-/*	// bind scene FBO
+	// bind scene FBO
 	currentWriteFBO = writeFBO[postproc_renderPassShadow]; //demoState->fbo_d32
-	a3framebufferActivate(currentWriteFBO);*/
+	a3framebufferActivate(currentWriteFBO);    //we use this so that we don't write to the default backBuffer every single time
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	currentDemoProgram = demoState->prog_transform;
@@ -283,6 +296,9 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	glDisable(GL_BLEND);
 
 	// shadow capture on inverted geometry
+
+	// notice how cullface is called here and at the end so that the shape is drawn inverted
+	// drawing it inside out ensures that the furthest point of possible occlusion is actually included in the image
 	glCullFace(GL_FRONT);
 	for (currentSceneObject = demoMode->obj_sphere, endSceneObject = demoMode->obj_ground;
 		currentSceneObject <= endSceneObject; ++currentSceneObject)
@@ -308,11 +324,11 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	//		- render shapes using appropriate shaders
 	//		- capture color and depth
 
-	// ****TO-DO:
+	// ****DONE:
 	//	-> uncomment scene pass FBO binding
-/*	// bind scene FBO
+	// bind scene FBO
 	currentWriteFBO = writeFBO[postproc_renderPassScene]; //demoState->fbo_c16x4_d24s8
-	a3framebufferActivate(currentWriteFBO);*/
+	a3framebufferActivate(currentWriteFBO);
 
 	// clear buffers
 	if (demoState->displaySkybox)
@@ -359,6 +375,11 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	// select pipeline algorithm
 	glDisable(GL_BLEND);
 
+	// ****DONE:
+	//	-> uncomment shadow map bind
+	// followed the advice from class and moved this up here, since there's only one texture
+	a3framebufferBindDepthTexture(writeFBO[postproc_renderPassShadow], a3tex_unit06); //demoState->fbo_d32
+
 	// forward shading algorithms
 	for (currentSceneObject = demoMode->obj_sphere, endSceneObject = demoMode->obj_ground;
 		currentSceneObject <= endSceneObject; ++currentSceneObject)
@@ -368,9 +389,6 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 		// activate texture maps
 		a3textureActivate(texture_dm[j], a3tex_unit00);
 		a3textureActivate(texture_sm[j], a3tex_unit01);
-		// ****TO-DO:
-		//	-> uncomment shadow map bind
-	/*	a3framebufferBindDepthTexture(writeFBO[postproc_renderPassShadow], a3tex_unit06); //demoState->fbo_d32*/
 
 		// send other data
 		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
@@ -412,13 +430,40 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	//	-> uncomment first post-processing pass
 	//	-> implement bloom pipeline following the above algorithm
 	//		(hint: this is the entirety of the first bright pass)
-/*	currentDemoProgram = demoState->prog_postBright;
+	currentDemoProgram = demoState->prog_postBright;
 	a3shaderProgramActivate(currentDemoProgram->program);
 	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);
 	currentWriteFBO = writeFBO[postproc_renderPassBright2];
 	a3framebufferActivate(currentWriteFBO);
+	a3vertexDrawableRenderActive(); //actually draws the quad
+
+	// basically the same process for blur, except obviously calling the different demoState and writing to the different buffer
+	currentDemoProgram = demoState->prog_postBlur;
+	a3shaderProgramActivate(currentDemoProgram->program);
+	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);
+	currentWriteFBO = writeFBO[postproc_renderPassBlurH2];
+	a3framebufferActivate(currentWriteFBO);
 	a3vertexDrawableRenderActive();
-	//...*/
+
+	// basically the same process for blur, except obviously calling the different demoState and writing to the different buffer
+	currentDemoProgram = demoState->prog_postBlur;
+	a3shaderProgramActivate(currentDemoProgram->program);
+
+	// remember to switch this up for the vertical
+	pixelSize.x = 1.0f / (float)currentWriteFBO->frameWidth;
+	pixelSize.y = 0.0f;
+
+	// sending the uniforms for height
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, pixelSize.v);
+	
+	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);  
+	currentWriteFBO = writeFBO[postproc_renderPassBlurH2];
+	a3framebufferActivate(currentWriteFBO);
+	a3vertexDrawableRenderActive();
+
+	//now do the rest
+	//you have to specify which frames you want colors from in the final pass (try addding them one by one), activate color from scene and the 3 blur results (vertical)
+
 
 
 	//-------------------------------------------------------------------------
@@ -429,12 +474,13 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	//	- draw final FSQ
 
 	// revert to back buffer and disable depth testing
+	// note that de-activating a buffer in this case is really just switching to the back buffer
 	a3framebufferDeactivateSetViewport(a3fbo_depthDisable,
 		-demoState->frameBorder, -demoState->frameBorder, demoState->frameWidth, demoState->frameHeight);
 
-	// ****TO-DO:
+	// ****DONE:
 	//	-> uncomment display FBO selection
-/*	// select framebuffer to display based on mode
+	// select framebuffer to display based on mode
 	currentDisplayFBO = writeFBO[renderPass];
 
 	// select output to display
@@ -461,9 +507,9 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	case postproc_renderPassBlurV8:
 		a3framebufferBindColorTexture(currentDisplayFBO, a3tex_unit00, renderTarget);
 		break;
-	}*/
+	}
 
-	// final display: activate desired final program and draw FSQ
+	// final display: activate desired final program and draw F(ull)S(creen)Q(uad]) 
 	if (currentDisplayFBO)
 	{
 		// determine if additional passes are required
