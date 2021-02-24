@@ -75,10 +75,26 @@ struct sModelMatrixStack
 	mat4 atlasMat;						// atlas matrix (texture -> cell)
 };
 
+struct sPointLightData
+{
+	vec4 position;					// position in rendering target space
+	vec4 worldPos;					// original position in world space
+	vec4 color;						// RGB color with padding
+	float radius;						// radius (distance of effect from center)
+	float radiusSq;					// radius squared (if needed)
+	float radiusInv;					// radius inverse (attenuation factor)
+	float radiusInvSq;					// radius inverse squared (attenuation factor)
+};
+
 uniform ubTransformStack 
 {
 	sProjectorMatrixStack uCameraMatrixStack, uLightMatrixStack;
 	sModelMatrixStack uModelMatrixStack[16];  //you can verify this number by checking the definition within the environemtn
+};
+
+uniform ubLight
+{
+	sPointLightData uPointLightData[4]; //found at line 108 of PostProc.h
 };
 
 void main()
