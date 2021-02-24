@@ -856,7 +856,7 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 	const a3ui32 targets_composite = 1;
 
 
-	// ****DONE:
+	// ****TO-DO:
 	//	-> uncomment framebuffer initialization
 	//	-> initialize all framebuffers
 	//		(hint: their names describe their features)
@@ -885,7 +885,7 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 	//		-> depth only
 	fbo = demoState->fbo_d32;
 	a3framebufferCreate(fbo, "fbo:d32",
-		0, a3fbo_colorDisable, a3fbo_depth32,		// note the lack of both color and a fragment shader
+		0, a3fbo_colorDisable, a3fbo_depth32,		// note the lack of color being passed
 		shadowMapSize, shadowMapSize);				// uses a square with length 2048, because a number that's a perfect square is performant with GPU 
 
 	//		-> set of full-size MRT-color only
@@ -895,18 +895,22 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		frameWidth1, frameHeight1);
 	
 	//		-> set of half/quarter/eighth-size color only
-	fbo = demoState->fbo_c16_szHalf;
-	a3framebufferCreate(fbo, "fbo:c16_szHalf",
-		1, a3fbo_colorRGBA16, a3fbo_depthDisable,
-		frameWidth1, frameHeight1);
-	fbo = demoState->fbo_c16_szQuarter;
-	a3framebufferCreate(fbo, "fbo:c16_szQuarter",
-		1, a3fbo_colorRGBA16, a3fbo_depthDisable,
-		frameWidth1, frameHeight1);
-	fbo = demoState->fbo_c16_szEighth;
-	a3framebufferCreate(fbo, "fbo:c16_szEighth",
-		1, a3fbo_colorRGBA16, a3fbo_depthDisable,
-		frameWidth1, frameHeight1);
+	for (int i = 0; i < 3; i++)
+	{
+		fbo = demoState->fbo_c16_szHalf + i;
+		a3framebufferCreate(fbo, "fbo:c16_szHalf",
+			1, a3fbo_colorRGBA16, a3fbo_depthDisable,
+			frameWidth1, frameHeight1);
+		fbo = demoState->fbo_c16_szQuarter + i;
+		a3framebufferCreate(fbo, "fbo:c16_szQuarter",
+			1, a3fbo_colorRGBA16, a3fbo_depthDisable,
+			frameWidth1, frameHeight1);
+		fbo = demoState->fbo_c16_szEighth + i;
+		a3framebufferCreate(fbo, "fbo:c16_szEighth",
+			1, a3fbo_colorRGBA16, a3fbo_depthDisable,
+			frameWidth1, frameHeight1);
+	}
+	
 
 	// ****DONE:
 	//	-> uncomment global framebuffer configuration
