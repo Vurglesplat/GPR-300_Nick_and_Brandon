@@ -430,6 +430,8 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	//	-> uncomment first post-processing pass
 	//	-> implement bloom pipeline following the above algorithm
 	//		(hint: this is the entirety of the first bright pass)
+
+	//		-> bright pass, half size
 	currentDemoProgram = demoState->prog_postBright;
 	a3shaderProgramActivate(currentDemoProgram->program);
 	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);
@@ -437,25 +439,35 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	a3framebufferActivate(currentWriteFBO);
 	a3vertexDrawableRenderActive(); //actually draws the quad
 
-	// basically the same process for blur, except obviously calling the different demoState and writing to the different buffer
+	//		-> blur in one direction (e.g. horizontal)
+	// basically the same process, except obviously calling the different demoState and writing to the different buffer
 	currentDemoProgram = demoState->prog_postBlur;
 	a3shaderProgramActivate(currentDemoProgram->program);
+	pixelSize.x = 1.0f / (float)currentWriteFBO->frameWidth;
+	pixelSize.y = 0.0f;
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, pixelSize.v);
 	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);
 	currentWriteFBO = writeFBO[postproc_renderPassBlurH2];
 	a3framebufferActivate(currentWriteFBO);
 	a3vertexDrawableRenderActive();
 
-	// basically the same process for blur, except obviously calling the different demoState and writing to the different buffer
+	//		-> blur in other direction (e.g. vertical)
+	// swapped for vertical blur
 	currentDemoProgram = demoState->prog_postBlur;
 	a3shaderProgramActivate(currentDemoProgram->program);
+	pixelSize.x = 0.0f;
+	pixelSize.y = 1.0f / (float)currentWriteFBO->frameHeight;
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, pixelSize.v);
+	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);
+	currentWriteFBO = writeFBO[postproc_renderPassBlurV2];
+	a3framebufferActivate(currentWriteFBO);
+	a3vertexDrawableRenderActive();
 
-	// remember to switch this up for the vertical
-	pixelSize.x = 1.0f / (float)currentWriteFBO->frameWidth;
-	pixelSize.y = 0.0f;
+
+
+
 
 	// sending the uniforms for height
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, pixelSize.v);
-	
 	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);  
 	currentWriteFBO = writeFBO[postproc_renderPassBlurH2];
 	a3framebufferActivate(currentWriteFBO);
@@ -537,13 +549,13 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	if ((demoState->displayGrid || demoState->displayTangentBases || demoState->displayWireframe) &&
 		renderPass != postproc_renderPassShadow)
 	{
-		// ****TO-DO:
+		// ****DONE:
 		//	-> uncomment overlay FBO activation and configuration
-	/*	// activate scene FBO and clear color; reuse depth
+		// activate scene FBO and clear color; reuse depth
 		currentWriteFBO = demoState->fbo_c16x4_d24s8;
 		a3framebufferActivate(currentWriteFBO);
 		glDisable(GL_STENCIL_TEST);
-		glClear(GL_COLOR_BUFFER_BIT);*/
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		// draw grid aligned to world
 		if (demoState->displayGrid)
