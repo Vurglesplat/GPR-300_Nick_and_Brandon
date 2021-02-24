@@ -30,6 +30,7 @@
 
 #include "../a3_DemoMode1_PostProc.h"
 
+
 //typedef struct a3_DemoState a3_DemoState;
 #include "../a3_DemoState.h"
 
@@ -377,7 +378,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 
 	// ****DONE:
 	//	-> uncomment shadow map bind
-	// followed the advice from class and moved this up here, since there's only one texture
+	// followed the advice from class and moved this up here, out of the loop since it only needs to be called once
 	a3framebufferBindDepthTexture(writeFBO[postproc_renderPassShadow], a3tex_unit06); //demoState->fbo_d32
 
 	// forward shading algorithms
@@ -439,7 +440,6 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	a3framebufferActivate(currentWriteFBO);
 	a3vertexDrawableRenderActive(); //actually draws the quad
 
-	//		-> blur in one direction (e.g. horizontal)
 	// basically the same process, except obviously calling the different demoState and writing to the different buffer
 	currentDemoProgram = demoState->prog_postBlur;
 	a3shaderProgramActivate(currentDemoProgram->program);
@@ -451,7 +451,6 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	a3framebufferActivate(currentWriteFBO);
 	a3vertexDrawableRenderActive();
 
-	//		-> blur in other direction (e.g. vertical)
 	// swapped for vertical blur
 	currentDemoProgram = demoState->prog_postBlur;
 	a3shaderProgramActivate(currentDemoProgram->program);
@@ -463,15 +462,19 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	a3framebufferActivate(currentWriteFBO);
 	a3vertexDrawableRenderActive();
 
+		//postproc_renderPassBright2,
+		//postproc_renderPassBlurH2,
+		//postproc_renderPassBlurV2,
+		//postproc_renderPassBright4,
+		//postproc_renderPassBlurH4,
+		//postproc_renderPassBlurV4,
+		//postproc_renderPassBright8,
+		//postproc_renderPassBlurH8,
+		//postproc_renderPassBlurV8,
+		//postproc_renderPassDisplay,
 
 
 
-
-	// sending the uniforms for height
-	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);  
-	currentWriteFBO = writeFBO[postproc_renderPassBlurH2];
-	a3framebufferActivate(currentWriteFBO);
-	a3vertexDrawableRenderActive();
 
 	//now do the rest
 	//you have to specify which frames you want colors from in the final pass (try addding them one by one), activate color from scene and the 3 blur results (vertical)
