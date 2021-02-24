@@ -866,17 +866,47 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 	//		-> set of full-size MRT-color only
 	//		-> set of half/quarter/eighth-size color only
 	// initialize framebuffers: MRT, color and depth formats, size
+
+	//		-> main MRT-color/depth/stencil combo (provided)
 	fbo = demoState->fbo_c16x4_d24s8;
 	a3framebufferCreate(fbo, "fbo:c16x4;d24s8",
 		4, a3fbo_colorRGBA16, a3fbo_depth24_stencil8,
 		frameWidth1, frameHeight1);
 
-	//the shadow map FB
+	//		-> float color only
+		// check if we should use 1 here
+		// As I beleive it's 1 due to the demoState->name differing from above
+		// but not positive
+	fbo = demoState->fbo_c32f;
+	a3framebufferCreate(fbo, "fbo:c32",
+		1, a3fbo_colorRGBA32F, a3fbo_depthDisable, 
+		frameWidth1, frameHeight1);
+
+	//		-> depth only
 	fbo = demoState->fbo_d32;
 	a3framebufferCreate(fbo, "fbo:d32",
 		0, a3fbo_colorDisable, a3fbo_depth32,		// note the lack of both color and a fragment shader
 		shadowMapSize, shadowMapSize);				// uses a square with length 2048, because a number that's a perfect square is performant with GPU 
 
+	//		-> set of full-size MRT-color only
+	fbo = demoState->fbo_c16x4;
+	a3framebufferCreate(fbo, "fbo:c16x4",
+		4, a3fbo_colorRGBA16, a3fbo_depthDisable,
+		frameWidth1, frameHeight1);
+	
+	//		-> set of half/quarter/eighth-size color only
+	fbo = demoState->fbo_c16_szHalf;
+	a3framebufferCreate(fbo, "fbo:c16_szHalf",
+		1, a3fbo_colorRGBA16, a3fbo_depthDisable,
+		frameWidth1, frameHeight1);
+	fbo = demoState->fbo_c16_szQuarter;
+	a3framebufferCreate(fbo, "fbo:c16_szQuarter",
+		1, a3fbo_colorRGBA16, a3fbo_depthDisable,
+		frameWidth1, frameHeight1);
+	fbo = demoState->fbo_c16_szEighth;
+	a3framebufferCreate(fbo, "fbo:c16_szEighth",
+		1, a3fbo_colorRGBA16, a3fbo_depthDisable,
+		frameWidth1, frameHeight1);
 
 	// ****DONE:
 	//	-> uncomment global framebuffer configuration
@@ -951,7 +981,7 @@ void a3demo_loadValidate(a3_DemoState* demoState)
 		a3bufferHandleUpdateReleaseCallback(currentUBO++);
 	while (currentTex < endTex)
 		a3textureHandleUpdateReleaseCallback(currentTex++);
-	// ****TO-DO:
+	// ****DONE:
 	//	-> uncomment framebuffer update
 	while (currentFBO < endFBO)
 		a3framebufferHandleUpdateReleaseCallback(currentFBO++);
