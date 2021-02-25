@@ -31,8 +31,13 @@
 
 layout (location = 0) out vec4 rtFragColor;
 
+in vec4 vTexcoord_atlas;
+uniform sampler2D uTex_dm;
+
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE PURPLE
-	rtFragColor = vec4(0.5, 0.0, 1.0, 1.0);
+//	rtFragColor = vec4(0.5, 1.0, 1.0, 1.0);
+	rtFragColor = texture(uTex_dm, vTexcoord_atlas.xy);
 }
