@@ -50,6 +50,7 @@ layout (location = 8) in vec2 aTexCoord;
 out vec4 vPosition;
 out vec4 vNormal;
 out vec2 vTexCoord;
+out vec4 vShadowCoord;
 
 flat out int vVertexID;
 flat out int vInstanceID;
@@ -97,6 +98,8 @@ void main()
 	vPosition = uModelMatrixStack[uIndex].modelViewMat *
 		aPosition;
 	gl_Position = uCameraMatrixStack.projectionMat * vPosition;
+
+	vShadowCoord = uLightMatrixStack.viewProjectionBiasMat * uModelMatrixStack[uIndex].modelMat * aPosition;
 
 	//vNormal = vec4(aNormal,0.0);
 

@@ -49,20 +49,26 @@ uniform ubLight
 	sPointLight uPointLightData[4]; //found at line 108 of PostProc.h
 };
 
-uniform sampler2D uTex_dm;
+uniform sampler2D uTex_dm; //phong
 uniform vec4 uColor; 
 
+uniform sampler2D uTex_shadow; //shadow mapping
 
 layout (location = 0) out vec4 rtFragColor;
 
 in vec4 vNormal;
 in vec4 vPosition;
 in vec2 vTexCoord; 
+in vec4 vShadowCoord; //shadow mapping
 
 void main()
 {
-	//uPointLightData[1].position
+	//shadow mapping set-up
+	vec4 shadowScreen = vShadowCoord / vShadowCoord.w; //perspective divide
+	float shadowSample = texture2D(uTex_shadow, shadowScreen.xy).r;
+	float fragIsShadowed = 1 - step(shadowScreen.z,shadowSample);
 
+	//phong from assignment 1
 	vec4 tex = texture(uTex_dm, vTexCoord); 
 
 	vec4 N = normalize(vNormal);
@@ -80,9 +86,13 @@ void main()
 	vec4 R = reflect(-L,N);
 	float phongCoeff = max(0.0,dot(R, V));
 
+
+	//shadow mapping scales down
+	lmbCoeff *= fragIsShadowed * 0.2 + (1-fragIsShadowed) * 1.0;
+
+
 	vec4 result = tex * uColor * uPointLightData[0].color * (lmbCoeff + phongCoeff) * attenuation;
+
 	rtFragColor = vec4(result.rgb,1.0); 
-
-
 //rtFragColor = texture(uTex_dm,vTexCoord);
 }
