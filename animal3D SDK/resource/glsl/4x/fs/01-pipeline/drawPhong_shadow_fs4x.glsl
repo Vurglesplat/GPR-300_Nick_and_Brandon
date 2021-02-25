@@ -61,16 +61,18 @@ in vec2 vTexCoord;
 
 void main()
 {
+	//uPointLightData[1].position
+
 	vec4 tex = texture(uTex_dm, vTexCoord); 
 
 	vec4 N = normalize(vNormal);
-	vec4 L = uPointLightData[1].position - vPosition;
+	vec4 L = uPointLightData[0].position - vPosition;
 	float lightDistance = length(L);
 	L = L/lightDistance; //This normalizes L WITHOUT using the normalize function
 						 // which would have called length() again, and we are using it later for attenuation
 
 	float lmbCoeff = max(0.0,dot(N, L));
-	float attenuation = mix(1.0,0.0,lightDistance * uPointLightData[1].radiusInvSq); // light intensity is based on distance relative to radius
+	float attenuation = mix(1.0,0.0,lightDistance * uPointLightData[0].radiusInvSq); // light intensity is based on distance relative to radius
 	
 	//Determining view and reflection vectors;
 	//thence the phong coefficient
@@ -78,7 +80,7 @@ void main()
 	vec4 R = reflect(-L,N);
 	float phongCoeff = max(0.0,dot(R, V));
 
-	vec4 result = tex * uColor * uPointLightData[1].color * (lmbCoeff + phongCoeff) * attenuation;
+	vec4 result = tex * uColor * uPointLightData[0].color * (lmbCoeff + phongCoeff) * attenuation;
 	rtFragColor = vec4(result.rgb,1.0); 
 
 

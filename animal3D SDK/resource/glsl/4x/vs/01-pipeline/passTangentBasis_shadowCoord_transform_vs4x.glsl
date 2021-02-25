@@ -100,7 +100,7 @@ void main()
 
 	//vNormal = vec4(aNormal,0.0);
 
-	vNormal = uMV_nrm * vec4(aNormal,0.0); //MAY NEED TO SWAP OUT UNIFORM
+	vNormal = uModelMatrixStack[uIndex].modelViewMat * vec4(aNormal,0.0); //MAY NEED TO SWAP OUT UNIFORM
 
 	vTexCoord = aTexCoord;
 
