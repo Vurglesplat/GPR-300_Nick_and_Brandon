@@ -30,8 +30,7 @@
 //	-> declare Gaussian blur function that samples along one axis
 //		(hint: the efficiency of this is described in class)
 
-in vec2 vTexcoord;
-
+in vec4  vTexcoord_atlas;
 uniform sampler2D uTex_dm;
 uniform vec2 uAxis;
 
@@ -39,13 +38,37 @@ layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
-	rtFragColor = texture(uTex_dm, vTexcoord);	
 
-	// temp vec2 current coord
-	// -> offset coord???
-	//		vec2 for offset: displacement between two pixels
-	//         e.g. horizontal: vec2(1/img_width, 0)
-	//		   e.g. vertical: vec2(0, 1/img_height)
-	//		   e.g. vertical: vec2(0, 1/img_height)
+//
+//
+//vec4 c = vec4(0.0);
+//ivec2 P = ivec2(gl_FragCoord.xy) - ivec2(0, weights.length() >> 1);
+//int i;
+//for (i = 0; i < weights.length(); i++)    
+//{        
+//	c += texelFetch(uTex_dm, P + ivec2(0, i), 0) * weights[i];
+//}
+//    rtFragColor = c;
+
+	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
+	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	vec2 temp = {0.5, 0.5};
+
+	vec4 finalColor =  texture(uTex_dm, vTexcoord_atlas.xy);
+	finalColor += texture(uTex_dm, vec2(vTexcoord_atlas.x + uAxis.x,vTexcoord_atlas.y + uAxis.y));
+	finalColor += texture(uTex_dm, vec2(vTexcoord_atlas.x - uAxis.x,vTexcoord_atlas.y - uAxis.y));
+	rtFragColor = finalColor/3.0f;	
+
+//	rtFragColor = texture(uTex_dm, vTexcoord_atlas.xy);	
+
+
+////	if(vTexCoord.x < temp.x)
+////		rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+////	else
+//
+////vec2 currentCoord = vTexcoord;
+//	
+//	  //       e.g. horizontal: vec2(1/img_width, 0)
+//		//	   e.g. vertical: vec2(0, 1/img_height)
+
 }
