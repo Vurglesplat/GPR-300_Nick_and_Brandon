@@ -33,9 +33,21 @@
 //	-> perform manual "perspective divide" on shadow coordinate
 //	-> perform "shadow test" (explained in class)
 
-uniform vec4 uLightPos; 
-uniform vec4 uLightColor;
-uniform float uLightInvRadiusSqr;
+struct sPointLight
+{
+	vec4 position;					 //position in rendering target space
+	vec4 worldPos;					 //original position in world space
+	vec4 color;						 //RGB color with padding
+	float radius;						 //radius (distance of effect from center)
+	float radiusSq;					 //radius squared (if needed)
+	float radiusInv;					 //radius inverse (attenuation factor)
+	float radiusInvSq;					 //radius inverse squared (attenuation factor)
+};
+
+uniform ubLight
+{
+	sPointLight uPointLightData[4]; //found at line 108 of PostProc.h
+};
 
 uniform sampler2D uTex_dm;
 uniform vec4 uColor; 
@@ -52,13 +64,13 @@ void main()
 	vec4 tex = texture(uTex_dm, vTexCoord); 
 
 	vec4 N = normalize(vNormal);
-	vec4 L = uLightPos - vPosition;
+	vec4 L = uPointLightData[1].position - vPosition;
 	float lightDistance = length(L);
 	L = L/lightDistance; //This normalizes L WITHOUT using the normalize function
 						 // which would have called length() again, and we are using it later for attenuation
 
 	float lmbCoeff = max(0.0,dot(N, L));
-	float attenuation = mix(1.0,0.0,lightDistance * uLightInvRadiusSqr); // light intensity is based on distance relative to radius
+	float attenuation = mix(1.0,0.0,lightDistance * uPointLightData[1].radiusInvSq); // light intensity is based on distance relative to radius
 	
 	//Determining view and reflection vectors;
 	//thence the phong coefficient
@@ -66,6 +78,9 @@ void main()
 	vec4 R = reflect(-L,N);
 	float phongCoeff = max(0.0,dot(R, V));
 
-	vec4 result = tex * uColor * uLightColor * (lmbCoeff + phongCoeff) * attenuation;
+	vec4 result = tex * uColor * uPointLightData[1].color * (lmbCoeff + phongCoeff) * attenuation;
 	rtFragColor = vec4(result.rgb,1.0); 
+
+
+//rtFragColor = texture(uTex_dm,vTexCoord);
 }
