@@ -33,12 +33,75 @@
 //	-> perform manual "perspective divide" on shadow coordinate
 //	-> perform "shadow test" (explained in class)
 
+struct sPointLight
+{
+	vec4 position;					 //position in rendering target space
+	vec4 worldPos;					 //original position in world space
+	vec4 color;						 //RGB color with padding
+	float radius;						 //radius (distance of effect from center)
+	float radiusSq;					 //radius squared (if needed)
+	float radiusInv;					 //radius inverse (attenuation factor)
+	float radiusInvSq;					 //radius inverse squared (attenuation factor)
+};
+
+uniform ubLight
+{
+	sPointLight uPointLightData[4]; //found at line 108 of PostProc.h
+};
+uniform int uCount;//number of lights
+
+uniform sampler2D uTex_dm;
+uniform vec4 uColor; 
+
+uniform sampler2D uTex_shadow; //shadow mapping
+
 layout (location = 0) out vec4 rtFragColor;
 
-uniform int uCount;
+in vec4 vNormal;
+in vec4 vPosition;
+in vec2 vTexCoord; 
+in vec4 vShadowCoord; //shadow mapping
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	//shadow mapping set-up
+	vec4 shadowScreen = vShadowCoord / vShadowCoord.w; //perspective divide
+	float shadowSample = texture2D(uTex_shadow, shadowScreen.xy).r;
+	float fragIsShadowed = 1 - step(shadowScreen.z,shadowSample + .0025);
+
+	
+	vec4 tex = texture(uTex_dm, vTexCoord); 
+
+	//phong shading
+	vec4 effect = vec4(0.0);
+	for(int i = 0; i < uCount; i++)
+	{
+
+		vec4 N = normalize(vNormal);
+		vec4 L = uPointLightData[i].position - vPosition;
+		float lightDistance = length(L);
+		L = L/lightDistance; //This normalizes L WITHOUT using the normalize function
+							 // which would have called length() again, and we are using it later for attenuation
+	
+		float lmbCoeff = max(0.0,dot(N, L));
+		float attenuation = mix(1.0,0.0,lightDistance * uPointLightData[i].radiusInvSq); // light intensity is based on distance relative to radius
+		
+		//Determining view and reflection vectors;
+		//thence the phong coefficient
+		vec4 V = normalize(-vPosition);
+		vec4 R = reflect(-L,N);
+		float phongCoeff = max(0.0,dot(R, V));
+
+
+		//shadow mapping scales down
+		lmbCoeff *= fragIsShadowed * 0.2 + (1-fragIsShadowed) * 1.0;
+
+		effect += uPointLightData[i].color * (lmbCoeff + phongCoeff) * attenuation;
+	}
+
+	//effect *= fragIsShadowed * 0.2 + (1-fragIsShadowed) * 1.0;
+
+	vec4 result = tex * uColor * effect;
+	rtFragColor = vec4(result.rgb,1.0); 
+//rtFragColor = texture(uTex_dm,vTexCoord);
 }

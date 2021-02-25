@@ -43,9 +43,18 @@
 //	-> declare and write varying for shadow coordinate
 
 layout (location = 0) in vec4 aPosition;
+layout (location = 2) in vec3 aNormal;
+layout (location = 8) in vec2 aTexCoord;
+
+//Relevant to lighting
+out vec4 vPosition;
+out vec4 vNormal;
+out vec2 vTexCoord;
+out vec4 vShadowCoord;
 
 flat out int vVertexID;
 flat out int vInstanceID;
+
 
 uniform int uIndex;
 // both of these are copied over from the environments definition
@@ -81,12 +90,22 @@ uniform ubTransformStack
 	sModelMatrixStack uModelMatrixStack[16];  //you can verify this number by checking the definition within the environemtn
 };
 
+uniform mat4 uMV_nrm; //MAY NEED TO CHANGE LATER
+
 void main()
 {
 	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = uCameraMatrixStack.projectionMat * 
-		uModelMatrixStack[uIndex].modelViewMat *
+	vPosition = uModelMatrixStack[uIndex].modelViewMat *
 		aPosition;
+	gl_Position = uCameraMatrixStack.projectionMat * vPosition;
+
+	vShadowCoord = uLightMatrixStack.viewProjectionBiasMat * uModelMatrixStack[uIndex].modelMat * aPosition;
+
+	//vNormal = vec4(aNormal,0.0);
+
+	vNormal = uModelMatrixStack[uIndex].modelViewMat * vec4(aNormal,0.0); //MAY NEED TO SWAP OUT UNIFORM
+
+	vTexCoord = aTexCoord;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
