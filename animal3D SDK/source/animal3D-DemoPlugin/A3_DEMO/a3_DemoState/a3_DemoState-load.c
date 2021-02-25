@@ -481,7 +481,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },
 			// 01-pipeline
 			{ { { 0 },	"shdr-fs:post-bright",				a3shader_fragment,	1,{ A3_DEMO_FS"01-pipeline/postBright_fs4x.glsl" } } }, // ****DECODE
-			{ { { 0 },	"shdr-fs:post-blur",				a3shader_fragment,	1,{ A3_DEMO_FS"01-pipeline/e/postBlur_fs4x.glsl" } } }, // ****DECODE
+			{ { { 0 },	"shdr-fs:post-blur",				a3shader_fragment,	1,{ A3_DEMO_FS"01-pipeline/postBlur_fs4x.glsl" } } }, // ****DECODE
 			{ { { 0 },	"shdr-fs:post-blend",				a3shader_fragment,	1,{ A3_DEMO_FS"01-pipeline/e/postBlend_fs4x.glsl" } } }, // ****DECODE
 			{ { { 0 },	"shdr-fs:draw-Phong-shadow",		a3shader_fragment,	2,{ A3_DEMO_FS"01-pipeline/drawPhong_shadow_fs4x.glsl"}}} // ****DECODE
 																					//A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } }, // ****DECODE
@@ -900,15 +900,15 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		fbo = demoState->fbo_c16_szHalf + i;
 		a3framebufferCreate(fbo, "fbo:c16_szHalf",
 			1, a3fbo_colorRGBA16, a3fbo_depthDisable,
-			frameWidth1 / (a3ui16)2.0f, frameHeight1 / (a3ui16)2.0f);
+			frameWidth1, frameHeight1);
 		fbo = demoState->fbo_c16_szQuarter + i;
 		a3framebufferCreate(fbo, "fbo:c16_szQuarter",
 			1, a3fbo_colorRGBA16, a3fbo_depthDisable,
-			frameWidth1 / (a3ui16)4.0f, frameHeight1 / (a3ui16)4.0f);
+			frameWidth1, frameHeight1);
 		fbo = demoState->fbo_c16_szEighth + i;
 		a3framebufferCreate(fbo, "fbo:c16_szEighth",
 			1, a3fbo_colorRGBA16, a3fbo_depthDisable,
-			frameWidth1 / (a3ui16)8.0f, frameHeight1 / (a3ui16)8.0f);
+			frameWidth1, frameHeight1);
 	}
 	
 

@@ -476,7 +476,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 
 	currentDemoProgram = demoState->prog_postBlur;
 	a3shaderProgramActivate(currentDemoProgram->program);
-	pixelSize.x = 4.0f / (float)currentWriteFBO->frameWidth;
+	pixelSize.x = 2.0f / (float)currentWriteFBO->frameWidth;
 	pixelSize.y = 0.0f;
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, pixelSize.v);
 	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);
@@ -487,7 +487,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	currentDemoProgram = demoState->prog_postBlur;
 	a3shaderProgramActivate(currentDemoProgram->program);
 	pixelSize.x = 0.0f;
-	pixelSize.y = 4.0f / (float)currentWriteFBO->frameHeight;
+	pixelSize.y = 2.0f / (float)currentWriteFBO->frameHeight;
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, pixelSize.v);
 	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);
 	currentWriteFBO = writeFBO[postproc_renderPassBlurV4];
@@ -505,7 +505,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 
 	currentDemoProgram = demoState->prog_postBlur;
 	a3shaderProgramActivate(currentDemoProgram->program);
-	pixelSize.x = 8.0f / (float)currentWriteFBO->frameWidth;
+	pixelSize.x = 4.0f / (float)currentWriteFBO->frameWidth;
 	pixelSize.y = 0.0f;
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, pixelSize.v);
 	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);
@@ -516,7 +516,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	currentDemoProgram = demoState->prog_postBlur;
 	a3shaderProgramActivate(currentDemoProgram->program);
 	pixelSize.x = 0.0f;
-	pixelSize.y = 8.0f / (float)currentWriteFBO->frameHeight;
+	pixelSize.y = 4.0f / (float)currentWriteFBO->frameHeight;
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, pixelSize.v);
 	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);
 	currentWriteFBO = writeFBO[postproc_renderPassBlurV8];
