@@ -30,10 +30,27 @@
 //	-> implement simple "tone mapping" such that the brightest areas of the 
 //		image are emphasized, and the darker areas get darker
 
+uniform vec4 uColor;
+uniform sampler2D uTex_dm;
+
 layout (location = 0) out vec4 rtFragColor;
+
+in vec4 vTexcoord_atlas;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE ORANGE
-	rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
+	vec4 tex = texture(uTex_dm, vTexcoord_atlas.xy);
+	vec4 tintedTex = tex * uColor;
+
+	float luminance = dot(tintedTex.rgb, vec3(0.3, 0.59, 0.11)); 
+	//Note: looking at the slides and comparing it to photoshop's effects, 
+	//it appears the luminance is a weighted greyscale.
+
+	float bright = -cos(luminance*3.14159265/2)+1; //Cosine curve
+	//float bright = 1 - sqrt(1 - luminance * luminance); //Circle curve
+	//float bright = pow(luminance,2); //Basic parabola
+
+	//rtFragColor =  tintedTex * exposure;
+	rtFragColor.rgb = tintedTex.rgb * bright;    
+	rtFragColor.a = 1.0f;
 }
