@@ -33,42 +33,39 @@
 in vec4  vTexcoord_atlas;
 uniform sampler2D uTex_dm;
 uniform vec2 uAxis;
-
 layout (location = 0) out vec4 rtFragColor;
+
+
+// 1/16 * [ 1 4 6 4 1 ]
+//uniform float weight[5] = float[] (0.0625, 0.25, 0.375, 0.25, 0.0625);
 
 void main()
 {
-
-//
-//
-//vec4 c = vec4(0.0);
-//ivec2 P = ivec2(gl_FragCoord.xy) - ivec2(0, weights.length() >> 1);
-//int i;
-//for (i = 0; i < weights.length(); i++)    
-//{        
-//	c += texelFetch(uTex_dm, P + ivec2(0, i), 0) * weights[i];
-//}
-//    rtFragColor = c;
-
 	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
-	vec2 temp = {0.5, 0.5};
+	// rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
 
 	vec4 finalColor =  texture(uTex_dm, vTexcoord_atlas.xy);
-	finalColor += texture(uTex_dm, vec2(vTexcoord_atlas.x + uAxis.x,vTexcoord_atlas.y + uAxis.y));
-	finalColor += texture(uTex_dm, vec2(vTexcoord_atlas.x - uAxis.x,vTexcoord_atlas.y - uAxis.y));
+	finalColor += texture(uTex_dm, vec2(vTexcoord_atlas.x + uAxis.x, vTexcoord_atlas.y + uAxis.y));
+	finalColor += texture(uTex_dm, vec2(vTexcoord_atlas.x - uAxis.x, vTexcoord_atlas.y - uAxis.y));
 	rtFragColor = finalColor/3.0f;	
 
-//	rtFragColor = texture(uTex_dm, vTexcoord_atlas.xy);	
-
-
-////	if(vTexCoord.x < temp.x)
-////		rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
-////	else
+//const float weights[] = float[](0.0024499299678342, 0.0043538453346397, 0.0073599963704157, 
+//		0.0118349786570722, 0.0181026699707781, 0.0263392293891488, 
+//		0.0364543006660986, 0.0479932050577658, 0.0601029809166942, 
+//		0.0715974486241365, 0.0811305381519717, 0.0874493212267511, 
+//		0.0896631113333857, 0.0874493212267511, 0.0811305381519717, 
+//		0.0715974486241365, 0.0601029809166942, 0.0479932050577658, 
+//		0.0364543006660986, 0.0263392293891488, 0.0181026699707781, 
+//		0.0118349786570722, 0.0073599963704157, 0.0043538453346397, 0.0024499299678342);
 //
-////vec2 currentCoord = vTexcoord;
+//	vec3 finalColor = texture(uTex_dm, vTexcoord_atlas.xy).rgb * weights [0];
+//	for (int i = 1; i < weights.length(); i++)
+//	{
+//		finalColor += texture(uTex_dm, vec2(vTexcoord_atlas.x + uAxis.x * i, vTexcoord_atlas.y + uAxis.y * i)).xyz * weights[i];
+//		finalColor += texture(uTex_dm, vec2(vTexcoord_atlas.x - uAxis.x * i, vTexcoord_atlas.y - uAxis.y * i)).xyz * weights[i];	
+//	}	
 //	
-//	  //       e.g. horizontal: vec2(1/img_width, 0)
-//		//	   e.g. vertical: vec2(0, 1/img_height)
+//	rtFragColor = vec4(finalColor/weights.length(), 1.0);
 
+//	rtFragColor = texture(uTex_dm, vTexcoord_atlas.xy);	
 }
