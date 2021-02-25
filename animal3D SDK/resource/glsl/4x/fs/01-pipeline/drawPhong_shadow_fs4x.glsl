@@ -94,12 +94,13 @@ void main()
 
 
 		//shadow mapping scales down
-		lmbCoeff *= fragIsShadowed * 0.2 + (1-fragIsShadowed) * 1.0;
+		//lmbCoeff *= fragIsShadowed * 0.2 + (1-fragIsShadowed) * 1.0;
 
 		effect += uPointLightData[i].color * (lmbCoeff + phongCoeff) * attenuation;
 	}
 
-	//effect *= fragIsShadowed * 0.2 + (1-fragIsShadowed) * 1.0;
+	//shadow mapping scales down
+	effect *= fragIsShadowed * 0.2 + (1-fragIsShadowed) * 1.0;
 
 	vec4 result = tex * uColor * effect;
 	rtFragColor = vec4(result.rgb,1.0); 
