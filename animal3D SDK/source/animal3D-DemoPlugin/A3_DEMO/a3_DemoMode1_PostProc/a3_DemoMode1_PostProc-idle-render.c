@@ -427,7 +427,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	//		-> blur in other direction (e.g. vertical)
 	//	-> composite original scene result with final blur iteration results
 
-	// ****TO-DO:
+	// ****DONE:
 	//	-> uncomment first post-processing pass
 	//	-> implement bloom pipeline following the above algorithm
 	//		(hint: this is the entirety of the first bright pass)
@@ -526,18 +526,14 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 	//combining
 	currentDemoProgram = demoState->prog_postBlend;
 	a3shaderProgramActivate(currentDemoProgram->program);
-	a3framebufferBindColorTexture(writeFBO[postproc_renderPassScene], a3tex_unit00, 0);
+	//binds the framebuffers to different textures that can all be utilized and blended by the shader when it is activated later
+	a3framebufferBindColorTexture(writeFBO[postproc_renderPassScene] , a3tex_unit00, 0);
 	a3framebufferBindColorTexture(writeFBO[postproc_renderPassBlurH2], a3tex_unit01, 0);
 	a3framebufferBindColorTexture(writeFBO[postproc_renderPassBlurH4], a3tex_unit02, 0);
 	a3framebufferBindColorTexture(writeFBO[postproc_renderPassBlurH8], a3tex_unit03, 0);
 	currentWriteFBO = writeFBO[postproc_renderPassDisplay];
 	a3framebufferActivate(currentWriteFBO);
 	a3vertexDrawableRenderActive();
-
-	//now do the rest
-	//you have to specify which frames you want colors from in the final pass (try addding them one by one), activate color from scene and the 3 blur results (vertical)
-
-
 
 	//-------------------------------------------------------------------------
 	// DISPLAY: final pass, perform and present final composite

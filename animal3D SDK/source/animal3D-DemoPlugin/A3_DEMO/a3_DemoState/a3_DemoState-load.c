@@ -856,7 +856,7 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 	const a3ui32 targets_composite = 1;
 
 
-	// ****TO-DO:
+	// ****DONE:
 	//	-> uncomment framebuffer initialization
 	//	-> initialize all framebuffers
 	//		(hint: their names describe their features)
@@ -874,9 +874,6 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		frameWidth1, frameHeight1);
 
 	//		-> float color only
-		// check if we should use 1 here
-		// As I beleive it's 1 due to the demoState->name differing from above
-		// but not positive
 	fbo = demoState->fbo_c32f;
 	a3framebufferCreate(fbo, "fbo:c32",
 		1, a3fbo_colorRGBA32F, a3fbo_depthDisable, 

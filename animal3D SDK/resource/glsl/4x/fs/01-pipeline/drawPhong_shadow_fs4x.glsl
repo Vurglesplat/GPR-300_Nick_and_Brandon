@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO:
+// ****DONE:
 // 1) Phong shading
 //	-> identical to outcome of last project
 // 2) shadow mapping
