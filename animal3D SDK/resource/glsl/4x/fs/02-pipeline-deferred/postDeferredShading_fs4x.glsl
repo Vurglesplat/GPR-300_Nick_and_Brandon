@@ -43,10 +43,24 @@ in vec4 vTexcoord_atlas;
 
 uniform int uCount;
 
+uniform sampler2D uImage00; //diffuse atlas
+uniform sampler2D uImage01; //specular atlas
+uniform sampler2D uImage04; //scene texcoord
+uniform sampler2D uImage05; //scene normals
+uniform sampler2D uImage07; //scene depth
+
 layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE ORANGE
-	rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
+	//rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
+
+	vec4 sceneTexcoord = texture(uImage04, vTexcoord_atlas.xy);
+	vec4 diffuseSample = texture(uImage00,sceneTexcoord.xy);
+
+	// DEBUGGING
+	//rtFragColor = vTexcoord_atlas;
+	//rtFragColor = texture(uImage00, vTexcoord_atlas);
+	rtFragColor = diffuseSample;
 }
