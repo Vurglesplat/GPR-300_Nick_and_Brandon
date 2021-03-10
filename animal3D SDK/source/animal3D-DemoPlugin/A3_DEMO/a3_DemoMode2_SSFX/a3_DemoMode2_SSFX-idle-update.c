@@ -124,6 +124,9 @@ void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a
 			projector->sceneObjectPtr->modelMatrixStackPtr->modelMatInverse.m,
 			pointLightData->worldPos.v);
 
+		//a3real4Real4x4Product(pointLightMVP,
+		//	projector->sceneObjectPtr->modelMatrixStackPtr->modelMatInverse.m,
+		//	pointLightData->worldPos.v);
 		// ****TO-DO:
 		//	-> calculate light transformation
 		//		(hint: in the previous line, we calculate the view-space position)
