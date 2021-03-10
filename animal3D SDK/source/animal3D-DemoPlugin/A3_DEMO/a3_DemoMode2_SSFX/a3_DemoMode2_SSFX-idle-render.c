@@ -330,22 +330,25 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		currentDemoProgram = demoState->prog_drawPhongPointLight_instanced;
 		a3shaderProgramActivate(currentDemoProgram->program);
 
-		//textures activated above
-		/*a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00);
+		//	-> activate pertinent textures for deferred lighting composition
+		//		(hint: all outputs from previous passes)
+		//		From the SCENE PASS
+		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00);
 		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01);
 		a3textureActivate(demoState->tex_atlas_nm, a3tex_unit02);
-		a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03);*/
-		////actived in PhongDS
-		//a3textureActivate(demoState->fbo_c16x4_d24s8, a3tex_unit04); //textcoords
-		//a3textureActivate(demoState->fbo_c16x4_d24s8, a3tex_unit05); // normals
-		//a3textureActivate(demoState->fbo_c16x4_d24s8, a3tex_unit07); // depth
+		a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03);
+		//		Based off what's in the COMPOSITION case for ssfx_renderModePhongDS
+		a3textureActivate(demoState->fbo_c16x4_d24s8->colorTextureHandle[0], a3tex_unit04); //Textcoords
+		a3textureActivate(demoState->fbo_c16x4_d24s8->colorTextureHandle[1], a3tex_unit05); //Normals
+		a3textureActivate(demoState->fbo_c16x4_d24s8->depthTextureHandle[0], a3tex_unit07); //Depth
 
-		//a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockLight); //light buffer
-		//a3shaderUniformBufferActivate(demoState->ubo_mvp, demoProg_block); //light transfoms
-		//a3shaderUniformSendFloatMat(a3unif_mat4,0, currentDemoProgram->ub, 1, demoState->ubo_mvp);
-		//a3shaderUniformSendFloatMat(a3unif_mat4,0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm); //inverse bias-projection
-
-
+		//	-> activate and send pertinent uniform blocks and values
+		//		(hint: light buffer, light transforms, inverse bias-projection)
+		//		(hint: inverse bias-projection variable is commented out above)
+		a3shaderUniformBufferActivate(demoState->ubo_mvp, demoProg_blockTransformStack); //Would this be how to do the light transform?
+		a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockLight); 
+		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uCount, 1, renderModeLightCount + renderMode);
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm); //Inverse bias-projection
 		//...
 
 		currentWriteFBO = writeFBO[ssfx_renderPassLights];
