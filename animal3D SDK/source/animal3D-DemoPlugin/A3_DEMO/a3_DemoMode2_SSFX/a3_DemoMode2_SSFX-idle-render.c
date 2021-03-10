@@ -235,7 +235,7 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 
 	// final model matrix and full matrix stack
 	a3mat4 projectionMat = activeCamera->projectorMatrixStackPtr->projectionMat;
-//	a3mat4 projectionBiasMatInv = activeCamera->projectorMatrixStackPtr->projectionBiasMatInverse;
+	a3mat4 projectionBiasMatInv = activeCamera->projectorMatrixStackPtr->projectionBiasMatInverse;
 	a3mat4 viewProjectionMat = activeCamera->projectorMatrixStackPtr->viewProjectionMat;
 	a3mat4 modelMat, modelViewMat, modelViewProjectionMat;
 
@@ -326,10 +326,27 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//	-> activate and send pertinent uniform blocks and values
 		//		(hint: light buffer, light transforms, inverse bias-projection)
 		//		(hint: inverse bias-projection variable is commented out above)
-	/*	// draw light volumes
+		// draw light volumes
 		currentDemoProgram = demoState->prog_drawPhongPointLight_instanced;
 		a3shaderProgramActivate(currentDemoProgram->program);
-		//...*/
+
+		//textures activated above
+		/*a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00);
+		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01);
+		a3textureActivate(demoState->tex_atlas_nm, a3tex_unit02);
+		a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03);*/
+		////actived in PhongDS
+		//a3textureActivate(demoState->fbo_c16x4_d24s8, a3tex_unit04); //textcoords
+		//a3textureActivate(demoState->fbo_c16x4_d24s8, a3tex_unit05); // normals
+		//a3textureActivate(demoState->fbo_c16x4_d24s8, a3tex_unit07); // depth
+
+		//a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockLight); //light buffer
+		//a3shaderUniformBufferActivate(demoState->ubo_mvp, demoProg_block); //light transfoms
+		//a3shaderUniformSendFloatMat(a3unif_mat4,0, currentDemoProgram->ub, 1, demoState->ubo_mvp);
+		//a3shaderUniformSendFloatMat(a3unif_mat4,0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm); //inverse bias-projection
+
+
+		//...
 
 		currentWriteFBO = writeFBO[ssfx_renderPassLights];
 		a3framebufferActivate(currentWriteFBO);
@@ -338,7 +355,11 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		// ****TO-DO:
 		//	-> draw many inverted instances of the unit sphere model (because 
 		//		point lights are spheres), and using additive blending
-
+		currentDemoProgram = demoState->prog_drawPhongPointLight_instanced;
+		a3shaderProgramActivate(currentDemoProgram->program);
+		//...
+		a3vertexDrawableActivateAndRenderInstanced(demoState->draw_unit_sphere, ssfxMaxCount_pointLight);
+		//...
 	}
 
 
@@ -388,22 +409,23 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		currentDemoProgram = demoState->prog_postDeferredShading;
 		a3shaderProgramActivate(currentDemoProgram->program);
 		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); // diffuse texture atlas
-		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); // texcoords
+		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); // textcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); // normals
-		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit06, 3); // "position"
-		a3framebufferBindDepthTexture(demoState->fbo_c16x4_d24s8, a3tex_unit07); // "position"
+		a3framebufferBindDepthTexture(demoState->fbo_c16x4_d24s8, a3tex_unit07); // depth
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, fsq.mm);
+		//...
 		break;
 	case ssfx_renderModePhongDL:
 		// ****TO-DO:
 		//	-> uncomment deferred lighting composite program and diffuse texture activations
 		//	-> activate pertinent textures for deferred lighting composition
 		//		(hint: all outputs from previous passes)
-	/*	// deferred lighting composite
+		// deferred lighting composite
 		//	- simple composition: multiply lighting colors by respective texture sample
 		currentDemoProgram = demoState->prog_postDeferredLightingComposite;
 		a3shaderProgramActivate(currentDemoProgram->program);
 		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); // diffuse texture atlas
-		//...*/
+		//...
 		break;
 	}
 
