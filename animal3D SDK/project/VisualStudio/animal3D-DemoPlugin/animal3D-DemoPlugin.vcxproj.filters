@@ -156,9 +156,6 @@
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoMode1_PostProc\a3_DemoMode1_PostProc-idle-update.c">
       <Filter>Source Files\common\A3_DEMO\a3_DemoMode1_PostProc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoMode1_PostProc\a3_DemoMode1_PostProc-load.c">
-      <Filter>Source Files\common\A3_DEMO\a3_DemoMode1_PostProc</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoMode1_PostProc\a3_DemoMode1_PostProc-unload.c">
       <Filter>Source Files\common\A3_DEMO\a3_DemoMode1_PostProc</Filter>
     </ClCompile>
@@ -176,6 +173,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoMode2_SSFX\a3_DemoMode2_SSFX-unload.c">
       <Filter>Source Files\common\A3_DEMO\a3_DemoMode2_SSFX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoMode1_PostProc\a3_DemoMode1_PostProc-load.c">
+      <Filter>Source Files\common\A3_DEMO\a3_DemoMode1_PostProc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
