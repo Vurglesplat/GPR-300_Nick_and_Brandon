@@ -65,6 +65,15 @@ out vec4 vPosition;
 out vec4 vNormal;
 out vec4 vTexcoord;
 
+out vec4 vPosition_screen; // for g buffer
+
+const mat4 bias = mat4 (
+ 0.5, 0.0, 0.0 , 0.0,
+ 0.0, 0.5, 0.0 , 0.0,
+ 0.0, 0.0, 0.5 , 0.0,
+ 0.5, 0.5, 0.5 , 1.0
+);
+
 void main()
 {
 // The main purpose of this buffer is to take data and convert it for use in Gbuffers further down the pipeline 
@@ -73,6 +82,8 @@ void main()
 		// DUMMY OUTPUT: directly assign input position to output position
 	//gl_Position = aPosition;
 	gl_Position = uModelMatrixStack[uIndex].modelViewProjectionMat * aPosition; 
+	vPosition_screen = bias * gl_Position;
+
 	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition;
 	vNormal = uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aNormal, 0.0);
 	vTexcoord = uModelMatrixStack[uIndex].atlasMat * aTexcoord;

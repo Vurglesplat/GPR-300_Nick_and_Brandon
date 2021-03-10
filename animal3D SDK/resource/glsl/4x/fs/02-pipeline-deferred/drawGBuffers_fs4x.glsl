@@ -41,6 +41,8 @@ layout (location = 0) out vec4 rtTexcoord;
 layout (location = 1) out vec4 rtNormal;
 layout (location = 3) out vec4 rtPosition;
 
+in vec4 vPosition_screen;
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
@@ -49,5 +51,5 @@ void main()
 
 	rtTexcoord = vTexcoord;
 	rtNormal = vec4(( normalize(vNormal.xyz) * 0.5 + 0.5), 1.0); //vec4 is used to make sure that there is always no transparency
-	rtPosition = vPosition;
+	rtPosition = vPosition_screen / vPosition_screen.w; // dividing by the depth turns the whole image into a box shape
 }

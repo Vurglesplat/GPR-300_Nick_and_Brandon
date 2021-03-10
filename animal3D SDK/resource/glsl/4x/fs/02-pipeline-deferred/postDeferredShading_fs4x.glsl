@@ -52,13 +52,14 @@ uniform sampler2D uImage05; // scene normal
 //uniform sampler2D uImage06; // scene postion
 uniform sampler2D uImage07; // scene depth
 
+uniform mat4 uPB_inv;	
 
 layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE ORANGE
-//	rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
+	//	rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
 	
 
 
@@ -75,5 +76,16 @@ void main()
 	//
 	vec4 sceneTexcoord = texture(uImage04, vTexcoord_atlas.xy); 
 	vec4 diffuseSample = texture(uImage00, sceneTexcoord.xy);
-	rtFragColor = diffuseSample;
+	vec4 specularSample = texture(uImage01, sceneTexcoord.xy);
+
+	vec4 position_screen = vTexcoord_atlas;
+	position_screen.z = texture(uImage07, vTexcoord_atlas.xy).r;
+
+	vec4 position_view = uPB_inv * position_screen;
+	position_view /= position_view.w;
+	vec4 normal_view = texture(uImage05, vTexcoord_atlas.xy);
+	normal_view = (normal_view - 0.5) * 2.0;
+
+	rtFragColor = normal_view;
+	rtFragColor.a = diffuseSample.a; //allows it to not affect the skybox
 }
