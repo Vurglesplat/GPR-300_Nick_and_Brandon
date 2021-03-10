@@ -141,7 +141,7 @@ void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a
 			pointLightData->position.x, pointLightData->position.y, pointLightData->position.z, 1.0
 		};
 
-		a3real4Real4x4Product(pointLightMVP,
+		a3real4x4Product(pointLightMVP->m,
 			projector->sceneObjectPtr->modelMatrixStackPtr->modelViewProjectionMat.m,
 			pointLightMV.m);
 

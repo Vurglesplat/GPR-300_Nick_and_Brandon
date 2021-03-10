@@ -49,7 +49,7 @@ uniform sampler2D uImage01; // specular atlas
 
 uniform sampler2D uImage04; // scene texcoord
 uniform sampler2D uImage05; // scene normal
-uniform sampler2D uImage06; // scene postion
+//uniform sampler2D uImage06; // scene postion
 uniform sampler2D uImage07; // scene depth
 
 
