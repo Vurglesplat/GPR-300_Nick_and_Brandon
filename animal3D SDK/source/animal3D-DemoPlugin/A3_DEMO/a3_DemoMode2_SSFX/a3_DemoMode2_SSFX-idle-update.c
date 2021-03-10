@@ -133,6 +133,15 @@ void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a
 		//		(hint: determine the scale part, append position and multiply by 
 		//			projection matrix to arrive at a proper MVP for each light)
 		// update and transform light matrix
+
+		//WRONG
+		a3mat4 pointLightMVP = {
+			pointLightData->radius, 0.0f, 0.0f, 0.0f,
+			0.0f, pointLightData->radius, 0.0f, 0.0f,
+			0.0f, 0.0f, pointLightData->radius, 0.0f,
+			pointLightData->position.x, pointLightData->position.y, pointLightData->position.z, pointLightData->position.w
+		};
+
 		//...
 	}
 }
