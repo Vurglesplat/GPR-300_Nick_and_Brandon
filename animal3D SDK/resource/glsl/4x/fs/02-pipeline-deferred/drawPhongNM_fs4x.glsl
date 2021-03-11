@@ -36,7 +36,31 @@
 //	-> implement loop in main to calculate and accumulate light
 //	-> calculate and output final Phong sum
 
-uniform int uCount;
+in vec4 vPosition;
+in vec4 vNormal;
+in vec4 vTexcoord;
+in vec4 vTangent;
+in vec4 vBitangent;
+
+struct sPointLight
+{
+	vec4 position;					 //position in rendering target space
+	vec4 worldPos;					 //original position in world space
+	vec4 color;						 //RGB color with padding
+	float radius;						 //radius (distance of effect from center)
+	float radiusSq;					 //radius squared (if needed)
+	float radiusInv;					 //radius inverse (attenuation factor)
+	float radiusInvSq;					 //radius inverse squared (attenuation factor)
+};
+
+uniform ubLight
+{
+	sPointLight uPointLightData[1024];
+};
+uniform int uCount;//number of lights
+
+uniform sampler2D uTex_dm, uTex_sm, uTex_nm;
+uniform vec4 uColor;
 
 layout (location = 0) out vec4 rtFragColor;
 
@@ -60,8 +84,52 @@ void calcPhongPoint(
 	in vec4 lightPos, in vec4 lightRadiusInfo, in vec4 lightColor
 );
 
+const mat4 bias = mat4 (
+ 2.0, 0.0, 0.0 , 0.0,
+ 0.0, 2.0, 0.0 , 0.0,
+ 0.0, 0.0, 2.0 , 0.0,
+ -1.0, -1.0, -1.0, 1.0
+);
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	//calculate final normal by transforming normal map sample
+	mat3 TBN = mat3(normalize(vTangent), 
+					normalize(vBitangent), 
+					normalize(vNormal));
+
+	vec3 normalTangentSpace = (bias * texture2D(uTex_nm,vTexcoord.xy)).rgb;
+	vec3 normalObjectSpace = TBN * normalTangentSpace;
+	vec4 normal = vec4(normalObjectSpace,1.0);
+
+	//calculate common view vector
+	vec4 view = normalize(-vPosition);
+
+	//calculate base frag color
+	vec4 fragColor = uColor * texture2D(uTex_dm,vTexcoord.xy);
+	
+	//declare lighting sums (diffuse, specular), initialized to zero
+	vec4 diffuseSum = vec4(0,0,0,0);
+	vec4 specularSum = vec4(0,0,0,0);
+	
+	//implement loop in main to calculate and accumulate light
+	vec4 diffuse, specular;
+	for(int i = 0; i < uCount; i++)
+	{
+		vec4 radiusInfo = vec4(uPointLightData[i].radius,
+								uPointLightData[i].radiusSq,
+								uPointLightData[i].radiusInv,
+								uPointLightData[i].radiusInvSq);
+
+		calcPhongPoint(diffuse,specular,
+						view,vPosition,normal,fragColor,
+						uPointLightData[i].position,
+						radiusInfo,
+						uPointLightData[i].color);
+		diffuseSum = diffuseSum + diffuse;
+		specularSum = specularSum + specular;
+	}
+
+	vec4 result = diffuseSum + specularSum;
+	rtFragColor = vec4(result.rgb, 1.0);
 }

@@ -40,6 +40,8 @@
 layout (location = 0) in vec4 aPosition;
 layout (location = 2) in vec3 aNormal;
 layout (location = 8) in vec4 aTexcoord;
+layout (location = 10) in vec3 aTangent;
+layout (location = 11) in vec3 aBitangent;
 
 struct sModelMatrixStack
 {
@@ -64,6 +66,8 @@ out int vInstanceID;
 out vec4 vPosition;
 out vec4 vNormal;
 out vec4 vTexcoord;
+out vec4 vTangent;
+out vec4 vBitangent;
 
 out vec4 vPosition_screen; // for g buffer
 
@@ -87,6 +91,9 @@ void main()
 	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition;
 	vNormal = uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aNormal, 0.0);
 	vTexcoord = uModelMatrixStack[uIndex].atlasMat * aTexcoord;
+
+	vTangent = uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aTangent, 0.0);
+	vBitangent = uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aBitangent, 0.0);
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
