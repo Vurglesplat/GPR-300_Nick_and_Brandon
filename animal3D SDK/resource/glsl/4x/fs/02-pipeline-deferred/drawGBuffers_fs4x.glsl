@@ -35,13 +35,26 @@
 in vec4 vPosition;
 in vec4 vNormal;
 in vec4 vTexcoord;	
+in vec4 vTangent;
+in vec4 vBitangent;
 
 //layout (location = 0) out vec4 rtFragColor;
 layout (location = 0) out vec4 rtTexcoord;
 layout (location = 1) out vec4 rtNormal;
 layout (location = 3) out vec4 rtPosition;
 
+uniform sampler2D uTex_nm;
+uniform sampler2D uImage00; // diffuse atlas
+
+
 in vec4 vPosition_screen;
+
+const mat4 bias = mat4 (
+ 2.0, 0.0, 0.0 , 0.0,
+ 0.0, 2.0, 0.0 , 0.0,
+ 0.0, 0.0, 2.0 , 0.0,
+ -1.0, -1.0, -1.0, 1.0
+);
 
 void main()
 {
@@ -49,7 +62,34 @@ void main()
 	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
 
 
+
+
+	mat3 TBN = mat3(normalize(vTangent), normalize(vBitangent), normalize(vNormal));
+
+
+	vec3 normalTangentSpace = (bias * texture2D(uTex_nm,vTexcoord.xy)).rgb;
+    vec3 normalObjectSpace = TBN * normalTangentSpace;
+    vec4 normal = vec4(normalObjectSpace,1.0);
+
+//	vec3 nm = texture(uTex_nm, vTexcoord.xy).xyz * 2.0 -vec3(1.0);
+//    nm = TBN * normalize(nm);
+//	uvec4 outvec0 = uvec4(0);
+//	vec4 outvec1 = vec4(0);
+//	vec3 color = texture(uImage00, rtTexcoord.xy).rgb;    
+
+
+//	outvec0.x = packHalf2x16(color.xy);    
+//	outvec0.y = packHalf2x16(vec2(color.z, nm.x));
+//    outvec0.z = packHalf2x16(nm.yz);
+//    outvec0.w = fs_in.material_id;
+//    outvec1.xyz = floatBitsToUint(fs_in.ws_coords);
+//    outvec1.w = 60.0;
+//    color0 = outvec0;
+//    color1 = outvec1;
+
+
 	rtTexcoord = vTexcoord;
-	rtNormal = vec4(( normalize(vNormal.xyz) * 0.5 + 0.5), 1.0); //vec4 is used to make sure that there is always no transparency
+	//rtNormal = vec4(( normalize(vNormal.xyz) * 0.5 + 0.5), 1.0); //vec4 is used to make sure that there is always no transparency
+	rtNormal = vec4(( normal.xyz * 0.5 + 0.5), 1.0); //vec4 is used to make sure that there is always no transparency
 	rtPosition = vPosition_screen / vPosition_screen.w; // dividing by the depth turns the whole image into a box shape
 }
