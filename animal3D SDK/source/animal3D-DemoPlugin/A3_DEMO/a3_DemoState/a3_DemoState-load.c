@@ -498,7 +498,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },
 			// 02-pipeline-deferred
 			{ { { 0 },	"shdr-fs:post-defer-comp",			a3shader_fragment,	1,{ A3_DEMO_FS"02-pipeline-deferred/e/postDeferredLightingComposite_fs4x.glsl" } } }, // ****DECODE
-			{ { { 0 },	"shdr-fs:post-Phong-defer",			a3shader_fragment,	2,{ A3_DEMO_FS"02-pipeline-deferred/e/postDeferredShading_fs4x.glsl", // ****DECODE
+			{ { { 0 },	"shdr-fs:post-Phong-defer",			a3shader_fragment,	2,{ A3_DEMO_FS"02-pipeline-deferred/postDeferredShading_fs4x.glsl", // ****DECODE
 																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } }, // ****DONE
 			{ { { 0 },	"shdr-fs:draw-Phong-light",			a3shader_fragment,	2,{ A3_DEMO_FS"02-pipeline-deferred/e/drawPhongPointLight_fs4x.glsl", // ****DECODE
 																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } }, // ****DONE
