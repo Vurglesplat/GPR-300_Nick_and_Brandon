@@ -38,6 +38,15 @@ layout (location = 0) in vec4 aPosition;
 flat out int vVertexID;
 flat out int vInstanceID;
 
+out vec4 vClipPositon;
+
+uniform ubTransformStack 
+{
+	mat4 uMVP[MAX_INSTANCES];
+};
+
+
+
 // bias matrix
 const mat4 bias = mat4(
 	0.5, 0.0, 0.0, 0.0,
@@ -48,6 +57,9 @@ const mat4 bias = mat4(
 
 void main()
 {
+	vec4 clipSpacePosition = uMVP[gl_InstanceID] * aPosition; //uMVP being that data from the ubo_mvp
+	vClipPositon = bias * (clipSpacePosition / clipSpacePosition.w);
+
 	// DUMMY OUTPUT: directly assign input position to output position
 	gl_Position = aPosition;
 
