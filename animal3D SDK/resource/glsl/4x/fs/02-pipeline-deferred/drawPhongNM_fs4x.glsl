@@ -36,6 +36,25 @@
 //	-> implement loop in main to calculate and accumulate light
 //	-> calculate and output final Phong sum
 
+struct sModelMatrixStack
+{
+	mat4 modelMat;						// model matrix (object -> world)
+	mat4 modelMatInverse;				// model inverse matrix (world -> object)
+	mat4 modelMatInverseTranspose;		// model inverse-transpose matrix (object -> world skewed)
+	mat4 modelViewMat;					// model-view matrix (object -> viewer)
+	mat4 modelViewMatInverse;			// model-view inverse matrix (viewer -> object)
+	mat4 modelViewMatInverseTranspose;	// model-view inverse transpose matrix (object -> viewer skewed)
+	mat4 modelViewProjectionMat;		// model-view-projection matrix (object -> clip)
+	mat4 atlasMat;						// atlas matrix (texture -> cell)
+};
+uniform ubTransformStack
+{
+	sModelMatrixStack uModelMatrixStack[128];
+};
+uniform int uIndex;
+
+
+
 in vec4 vPosition;
 in vec4 vNormal;
 in vec4 vTexcoord;
@@ -99,11 +118,13 @@ void main()
 					normalize(vNormal));
 
 	vec3 normalTangentSpace = (bias * texture2D(uTex_nm,vTexcoord.xy)).rgb;
-	vec3 normalObjectSpace = TBN * normalTangentSpace;
+	vec3 normalObjectSpace = (TBN) * normalize(normalTangentSpace);
 	vec4 normal = vec4(normalObjectSpace,1.0);
 
 	//calculate common view vector
 	vec4 view = normalize(-vPosition);
+
+
 
 	//calculate base frag color
 	vec4 fragColor = uColor * texture2D(uTex_dm,vTexcoord.xy);
@@ -131,5 +152,8 @@ void main()
 	}
 
 	vec4 result = diffuseSum + specularSum;
-	rtFragColor = vec4(result.rgb, 1.0);
+
+
+	vec4 test = normal * .5 + vec4(.5);
+	rtFragColor = vec4(test.rgb, 1.0);
 }
