@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****DONE: 
 //	-> comment out dummy content; this shader should literally do nothing
 
 void main()

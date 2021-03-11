@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****DONE: 
 //	-> set tessellation levels, adjust as needed
 
 //This specificies how many vertices are in the patch, technically makes the first line we added in idle-render a bit redundant.
@@ -36,6 +36,10 @@ uniform vec2 uLevelOuter;
 void main()
 {
 	// we need to also tell GLSL about the inner level, however lines don't use the inner
+
+	//Isolines have 2 dimensons of tesselation.
+	//	1. how many lines ya wanna make
+	//	2. how many subdivisions each strip with have
 	gl_TessLevelOuter[0] = uLevelOuter[0];
 	gl_TessLevelOuter[1] = uLevelOuter[1];
 }

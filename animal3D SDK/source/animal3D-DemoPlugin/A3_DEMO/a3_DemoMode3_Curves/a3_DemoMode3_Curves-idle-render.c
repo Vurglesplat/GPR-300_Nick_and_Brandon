@@ -1,4 +1,4 @@
-/*
+﻿/*
 	Copyright 2011-2021 Daniel S. Buckstein
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -113,26 +113,19 @@ a3ret a3vertexDrawableRenderIsoPatches(a3ui32 const count)
 	if (count)
 	{
 		// ****DONE: 
-		//	-> set patch vertices parameter for isolines (which is a line segment)
-		// this is mainly for the two line segments of the beginning and the end, refer to the Patches heading in the linked note below
-		// calls the function glPatchParameteri, sending two verteces per
-		glPatchParameteri(GL_PATCH_VERTICES, 2);
+		//	-> set patch vertices parameter for isolines
+		//	-> disable anything that would result in a VAO, VBO and/or IBO based render
+		//	-> invoke rendering enough vertices to cover all path segments
+		// force isoline patches
 
+		//isoline means line segment
+
+		glPatchParameteri(GL_PATCH_VERTICES, 2);
 		// we are drawing entirely from nothing, this is to disable basically any renderers
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		// at this point we've told GLSL we are rendering two lines from scratch
-
-
-		// this is the actual drawing process, the first parameter is the drawing mode
-		// patches is the specific rendering mode always used for tesselation
 		glDrawArrays(GL_PATCHES, 0, count * 2);
-
-
-		//	-> disable anything that would result in a VAO, VBO and/or IBO based render
-		//	-> invoke rendering enough vertices to cover all path segments
-		// force isoline patches
 
 		// this and the next one  kind of look like the names of functions we've already been using
 
