@@ -42,8 +42,25 @@ in vec4 vTexcoord;
 in vec4 vTangent;
 in vec4 vBitangent;
 
-uniform int uCount;
-uniform sampler2D uTex_nm;
+struct sPointLight
+{
+	vec4 position;					 //position in rendering target space
+	vec4 worldPos;					 //original position in world space
+	vec4 color;						 //RGB color with padding
+	float radius;						 //radius (distance of effect from center)
+	float radiusSq;					 //radius squared (if needed)
+	float radiusInv;					 //radius inverse (attenuation factor)
+	float radiusInvSq;					 //radius inverse squared (attenuation factor)
+};
+
+uniform ubLight
+{
+	sPointLight uPointLightData[1024];
+};
+uniform int uCount;//number of lights
+
+uniform sampler2D uTex_dm, uTex_sm, uTex_nm;
+uniform vec4 uColor;
 
 layout (location = 0) out vec4 rtFragColor;
 
@@ -76,12 +93,32 @@ const mat4 bias = mat4 (
 
 void main()
 {
+	//calculate final normal by transforming normal map sample
 	mat3 TBN = mat3(normalize(vTangent), 
 					normalize(vBitangent), 
 					normalize(vNormal));
-
 	vec3 normalTangentSpace = (bias * texture2D(uTex_nm,vTexcoord.xy)).rgb;
 	vec3 normalObjectSpace = TBN * normalTangentSpace;
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
+
+	//calculate common view vector
+	vec4 view = normalize(-vPosition);
+
+	//calculate base frag color
+	vec4 fragColor = uColor * texture2D(uTex_dm,vTexcoord.xy);
+	
+	//declare lighting sums (diffuse, specular), initialized to zero
+	vec4 diffuseSum = vec4(0,0,0,0);
+	vec4 specularSum = vec4(0,0,0,0);
+	
+	//implement loop in main to calculate and accumulate light
+	vec4 diffuse, specular;
+	for(int i = 0; i < uCount; i++)
+	{
+		calcPhongPoint(diffuse,specular,
+						view,vPosition,normalObjectSpace,fragColor,
+						uPointLightData[i].position,uPointLightData[i].radius,uPointLightData[i].color);
+	}
+
+	
 	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
 }
