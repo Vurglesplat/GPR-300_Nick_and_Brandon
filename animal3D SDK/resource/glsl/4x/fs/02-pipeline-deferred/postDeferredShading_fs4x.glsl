@@ -41,7 +41,6 @@
 
 in vec4 vTexcoord_atlas;
 
-uniform int uCount;
 
 uniform sampler2D uImage00; // diffuse atlas
 uniform sampler2D uImage01; // specular atlas
@@ -52,9 +51,33 @@ uniform sampler2D uImage05; // scene normal
 //uniform sampler2D uImage06; // scene postion
 uniform sampler2D uImage07; // scene depth
 
+//from render
+uniform int renderModeLightCount;
 uniform mat4 uPB_inv;	
+uniform int uCount;
 
 layout (location = 0) out vec4 rtFragColor;
+
+
+// from the forward shading version
+
+struct sPointLightData
+{
+    vec4 position;                    // position in rendering target space
+    vec4 worldPos;                    // original position in world space
+    vec4 color;                        // RGB color with padding
+    float radius;                        // radius (distance of effect from center)
+    float radiusSq;                    // radius squared (if needed)
+    float radiusInv;                    // radius inverse (attenuation factor)
+    float radiusInvSq;                    // radius inverse squared (attenuation factor)
+};
+
+uniform ubo_light
+{
+    sPointLightData uPointLightData[MAX_LIGHTS];
+};
+
+
 
 void main()
 {
@@ -62,13 +85,12 @@ void main()
 	//	rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
 	
 
-
 	// phong
 	// ambient
 	// diffuse color * diffuse light +  specular color + specular light
 	
-	// we have: diff&spec atlas 
-	// we need: light data -> uniform, model/scene data -> g-buffers 
+	// we have: diff&spec atlas, light data -> uniform
+	// we need: , model/scene data -> g-buffers 
 
 
 	// draw objects with the diffuse texture applied
@@ -88,4 +110,39 @@ void main()
 
 	rtFragColor = normal_view;
 	rtFragColor.a = diffuseSample.a; //allows it to not affect the skybox
+
+
+
+							// from the forward phong implementation
+	vec4 tex = texture(uImage05, vTexcoord_atlas.xy); 
+
+	//phong shading
+	vec4 effect = vec4(0.0);
+	for(int i = 0; i < uCount; i++)
+	{
+
+		vec4 N = normalize(texture(uImage05, vTexcoord_atlas.xy));
+		vec4 L = uPointLightData[i].position - vTexcoord_atlas;
+		float lightDistance = length(L);
+		L = L/lightDistance; //This normalizes L WITHOUT using the normalize function
+							 // which would have called length() again, and we are using it later for attenuation
+	
+		float lmbCoeff = max(0.0,dot(N, L));
+		float attenuation = mix(1.0,0.0,lightDistance * uPointLightData[i].radiusInvSq); // light intensity is based on distance relative to radius
+		
+		//Determining view and reflection vectors;
+		//thence the phong coefficient
+		vec4 V = normalize(-vTexcoord_atlas);
+		vec4 R = reflect(-L,N);
+		float phongCoeff = max(0.0,dot(R, V));
+
+
+		//shadow mapping scales down
+//		lmbCoeff *= fragIsShadowed * 0.2 + (1-fragIsShadowed) * 1.0;
+
+		effect += uPointLightData[i].color * (lmbCoeff + phongCoeff) * attenuation;
+	}
+	vec4 result = tex * texture(uImage05, vTexcoord_atlas.xy);// * effect;
+	//rtFragColor = vec4(texture(uImage05, vTexcoord_atlas.xy).rbg,1.0); 
+	rtFragColor = result; 
 }
