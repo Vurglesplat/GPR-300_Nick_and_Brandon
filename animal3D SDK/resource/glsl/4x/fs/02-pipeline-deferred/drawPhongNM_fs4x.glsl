@@ -36,7 +36,14 @@
 //	-> implement loop in main to calculate and accumulate light
 //	-> calculate and output final Phong sum
 
+in vec4 vPosition;
+in vec4 vNormal;
+in vec4 vTexcoord;
+in vec4 vTangent;
+in vec4 vBitangent;
+
 uniform int uCount;
+uniform sampler2D uTex_nm;
 
 layout (location = 0) out vec4 rtFragColor;
 
@@ -60,8 +67,21 @@ void calcPhongPoint(
 	in vec4 lightPos, in vec4 lightRadiusInfo, in vec4 lightColor
 );
 
+const mat4 bias = mat4 (
+ 2.0, 0.0, 0.0 , 0.0,
+ 0.0, 2.0, 0.0 , 0.0,
+ 0.0, 0.0, 2.0 , 0.0,
+ -1.0, -1.0, -1.0, 1.0
+);
+
 void main()
 {
+	mat3 TBN = mat3(normalize(vTangent), 
+					normalize(vBitangent), 
+					normalize(vNormal));
+
+	vec3 normalTangentSpace = (bias * texture2D(uTex_nm,vTexcoord.xy)).rgb;
+	vec3 normalObjectSpace = TBN * normalTangentSpace;
 	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
 	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
 }
