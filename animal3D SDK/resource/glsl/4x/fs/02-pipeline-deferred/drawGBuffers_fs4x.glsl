@@ -41,12 +41,20 @@ layout (location = 0) out vec4 rtTexcoord;
 layout (location = 1) out vec4 rtNormal;
 layout (location = 3) out vec4 rtPosition;
 
+// layout (binding = 1) uniform sampler2D tex_normal_map;  ???
+
 in vec4 vPosition_screen;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
 	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+
+
+//	vec3 N = normalize(fs_in.normal);
+//	vec3 T = normalize(fs_in.tangent);
+//	vec3 B = cross(N, T);
+//	mat3 TBN = mat3(T, B, N);
 
 
 	rtTexcoord = vTexcoord;
