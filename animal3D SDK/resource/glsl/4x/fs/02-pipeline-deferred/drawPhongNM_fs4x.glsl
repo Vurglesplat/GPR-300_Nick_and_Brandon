@@ -97,8 +97,10 @@ void main()
 	mat3 TBN = mat3(normalize(vTangent), 
 					normalize(vBitangent), 
 					normalize(vNormal));
+
 	vec3 normalTangentSpace = (bias * texture2D(uTex_nm,vTexcoord.xy)).rgb;
 	vec3 normalObjectSpace = TBN * normalTangentSpace;
+	vec4 normal = vec4(normalObjectSpace,1.0);
 
 	//calculate common view vector
 	vec4 view = normalize(-vPosition);
@@ -114,11 +116,20 @@ void main()
 	vec4 diffuse, specular;
 	for(int i = 0; i < uCount; i++)
 	{
+		vec4 radiusInfo = vec4(uPointLightData[i].radius,
+								uPointLightData[i].radiusSq,
+								uPointLightData[i].radiusInv,
+								uPointLightData[i].radiusInvSq);
+
 		calcPhongPoint(diffuse,specular,
-						view,vPosition,normalObjectSpace,fragColor,
-						uPointLightData[i].position,uPointLightData[i].radius,uPointLightData[i].color);
+						view,vPosition,normal,fragColor,
+						uPointLightData[i].position,
+						radiusInfo,
+						uPointLightData[i].color);
+		diffuseSum = diffuseSum + diffuse;
+		specularSum = specularSum + specular;
 	}
 
-	
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	vec4 result = diffuseSum + specularSum;
+	rtFragColor = vec4(result.rgb, 1.0);
 }

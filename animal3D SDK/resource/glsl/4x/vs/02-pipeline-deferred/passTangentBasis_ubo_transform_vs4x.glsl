@@ -92,8 +92,8 @@ void main()
 	vNormal = uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aNormal, 0.0);
 	vTexcoord = uModelMatrixStack[uIndex].atlasMat * aTexcoord;
 
-	vTangent = uModelMatrixStack[uIndex].modelViewMat * vec4(aTangent, 0.0);
-	vBitangent = uModelMatrixStack[uIndex].modelViewMat * vec4(aBitangent, 0.0);
+	vTangent = uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aTangent, 0.0);
+	vBitangent = uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aBitangent, 0.0);
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
