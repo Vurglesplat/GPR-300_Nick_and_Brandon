@@ -112,11 +112,29 @@ a3ret a3vertexDrawableRenderIsoPatches(a3ui32 const count)
 {
 	if (count)
 	{
-		// ****TO-DO: 
-		//	-> set patch vertices parameter for isolines
+		// ****DONE: 
+		//	-> set patch vertices parameter for isolines (which is a line segment)
+		// this is mainly for the two line segments of the beginning and the end, refer to the Patches heading in the linked note below
+		// calls the function glPatchParameteri, sending two verteces per
+		glPatchParameteri(GL_PATCH_VERTICES, 2);
+
+		// we are drawing entirely from nothing, this is to disable basically any renderers
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		// at this point we've told GLSL we are rendering two lines from scratch
+
+
+		// this is the actual drawing process, the first parameter is the drawing mode
+		// patches is the specific rendering mode always used for tesselation
+		glDrawArrays(GL_PATCHES, 0, count * 2);
+
+
 		//	-> disable anything that would result in a VAO, VBO and/or IBO based render
 		//	-> invoke rendering enough vertices to cover all path segments
 		// force isoline patches
+
+		// this and the next one  kind of look like the names of functions we've already been using
 
 		return 1;
 	}
@@ -492,8 +510,8 @@ void a3curves_render(a3_DemoState const* demoState, a3_DemoMode3_Curves const* d
 			currentDemoProgram = demoState->prog_drawCurvePath;
 			a3shaderProgramActivate(currentDemoProgram->program);
 			a3shaderUniformBufferActivate(demoState->ubo_curve, demoProg_blockCurve);
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, viewProjectionMat.mm);
-			a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uLevelOuter, 1, tessLevelCurve[0]);
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, viewProjectionMat.mm); 
+			a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uLevelOuter, 1, tessLevelCurve[0]); 
 			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uCount, 1, &demoMode->curveWaypointCount);
 			a3vertexDrawableRenderIsoPatches(demoMode->curveWaypointCount);
 		}

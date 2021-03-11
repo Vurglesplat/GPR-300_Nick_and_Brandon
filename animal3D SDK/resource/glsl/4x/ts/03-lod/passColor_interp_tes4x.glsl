@@ -29,6 +29,8 @@
 //	-> implement spline interpolation algorithm based on scene object's path
 //	-> interpolate along curve using correct inputs and project result
 
+// this shader evaluates one of the subdivided verteces
+
 layout (isolines, equal_spacing) in;
 
 uniform mat4 uP;

@@ -27,11 +27,15 @@
 // ****TO-DO: 
 //	-> set tessellation levels, adjust as needed
 
+//This specificies how many vertices are in the patch, technically makes the first line we added in idle-render a bit redundant.
 layout (vertices = 2) out;
 
+// first dimension is how many strips you wish to have "clones" of the line essentially, the second is how many subdivisions you want each strip to have
 uniform vec2 uLevelOuter;
 
 void main()
 {
-	
+	// we need to also tell GLSL about the inner level, however lines don't use the inner
+	gl_TessLevelOuter[0] = uLevelOuter[0];
+	gl_TessLevelOuter[1] = uLevelOuter[1];
 }
