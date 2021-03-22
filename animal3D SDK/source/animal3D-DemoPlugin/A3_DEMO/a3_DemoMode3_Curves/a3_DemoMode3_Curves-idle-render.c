@@ -118,6 +118,15 @@ a3ret a3vertexDrawableRenderIsoPatches(a3ui32 const count)
 		//	-> invoke rendering enough vertices to cover all path segments
 		// force isoline patches
 
+
+		// this is how  you would change the tesselation levels
+		float  defaultTessLevelsOuter[4] = { 1.0f, 1.0f, 1.0f , 1.0f }, defaultTessLevelsInner[2] = { 1.0f , 1.0f };
+
+		//glPatchParameteri(GL_PATCH_VERTICES, 2);
+
+		glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, defaultTessLevelsOuter);
+		glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, defaultTessLevelsInner);
+
 		//isoline means line segment
 
 		glPatchParameteri(GL_PATCH_VERTICES, 2);
@@ -502,7 +511,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_DemoMode3_Curves const* d
 			// curve
 			currentDemoProgram = demoState->prog_drawCurvePath;
 			a3shaderProgramActivate(currentDemoProgram->program);
-			a3shaderUniformBufferActivate(demoState->ubo_curve, demoProg_blockCurve);
+			a3shaderUniformBufferActivate(demoState->ubo_curve, demoProg_blockCurve);    //this is the uniform block we define in interp_tus4
 			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, viewProjectionMat.mm); 
 			a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uLevelOuter, 1, tessLevelCurve[0]); 
 			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uCount, 1, &demoMode->curveWaypointCount);

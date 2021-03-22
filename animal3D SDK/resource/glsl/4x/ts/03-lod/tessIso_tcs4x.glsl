@@ -38,8 +38,23 @@ void main()
 	// we need to also tell GLSL about the inner level, however lines don't use the inner
 
 	//Isolines have 2 dimensons of tesselation.
-	//	1. how many lines ya wanna make
+	//	1. how many lines you wanna make, this is effectively how many clones you wish to make
 	//	2. how many subdivisions each strip with have
 	gl_TessLevelOuter[0] = uLevelOuter[0];
 	gl_TessLevelOuter[1] = uLevelOuter[1];
+
+	/*
+		Note on isolines
+
+		when we talk about a single line segment, this is called a patch, how many verteces are in a single patch?   2
+		One end and then the other
+		
+		
+		
+		
+		
+		
+		
+		
+	*/
 }
