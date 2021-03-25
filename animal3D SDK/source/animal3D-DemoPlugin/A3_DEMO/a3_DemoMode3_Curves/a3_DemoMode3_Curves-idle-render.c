@@ -155,7 +155,19 @@ a3ret a3vertexDrawableRenderTriPatches(a3_VertexDrawable const* drawable)
 		//	-> copy regular rendering algorithm
 		//	-> replace primitive type with "patches" keyword
 		// draw
+
+		//this is actualoy drawqing from a a model instead of drawing the lines from thin air
+		glPatchParameter(GL_PATCH_VERTICES, 3);
 		
+		//from vertexDrawable-OpenGl line ???
+		glBindVertexArray(drawable->vertexArray->handle->handle);
+		if (drawable->indexType)
+		{
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawable->indexBuffer->handle->handle);
+			glDrawElements(GL_PATCHES, drawable->count, drawable->indexType, drawable->indexing);
+		}
+		else
+			glDrawArrays(GL_PATCHES, drawable->first, drawable->count);
 		return 1;
 	}
 	return -1;

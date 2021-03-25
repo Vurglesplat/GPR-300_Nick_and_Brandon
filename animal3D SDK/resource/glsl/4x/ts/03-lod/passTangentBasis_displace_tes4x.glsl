@@ -33,7 +33,14 @@
 //		(hint: start by testing a "pass-thru" shader that only copies 
 //		gl_Position from the previous stage to get the hang of it)
 
+//this actually isn't an error
 layout (triangles, equal_spacing) in;
+
+
+in vbVertexData_tess {
+	mat3 vTangentBasis_view;
+	vec4 vTexcoord_atlas;
+} vVertexData_tess[];
 
 void main()
 {
