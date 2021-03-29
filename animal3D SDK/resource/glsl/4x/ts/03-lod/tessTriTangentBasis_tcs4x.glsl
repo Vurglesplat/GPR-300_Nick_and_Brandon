@@ -41,7 +41,7 @@ in vbVertexData {
 } vVertexData_in[];
 
 out vbVertexData_tess {
-	mat3 vTangentBasis_view;
+	mat4 vTangentBasis_view;
 	vec4 vTexcoord_atlas;
 } vVertexData_tess[];
 
