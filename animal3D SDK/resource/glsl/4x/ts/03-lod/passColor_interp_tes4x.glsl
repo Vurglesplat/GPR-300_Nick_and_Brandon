@@ -64,12 +64,14 @@ void main()
 	//indices
 	int current = gl_PrimitiveID; // he uses i0
 	int destination = (current + 1) % uCount; // he uses i1
+	float u = gl_TessCoord[0];
+
 
 	//vec4 position = vec4(gl_TessCoord[0], 0.0, -1.0, 1.0);
 	vec4 position = mix( //he just called this p
 		uCurveWaypoint[current],
 		uCurveWaypoint[destination],
-		gl_TessCoord[0] // you can change the color with this var
+		u // you can change the color with this var
 		);	
 
 
@@ -77,7 +79,7 @@ void main()
 	gl_Position = uP * position;
 	
 	
-	vColor = vec4(0.5, 0.0, 1.0, 1.0); //this one also change the color
+	vColor = vec4(0.5, 0.5, u, 1.0); //this one also change the color
 	
 	
 	
