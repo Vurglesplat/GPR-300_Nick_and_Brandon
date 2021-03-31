@@ -60,12 +60,35 @@ void calcPhongPoint(out vec4 diffuseColor, out vec4 specularColor, in vec4 eyeVe
 	
 vec3 calcParallaxCoord(in vec3 coord, in vec3 viewVec, const int steps)
 {
-	// ****TO-DO:
+	// ****DONE:
 	//	-> step along view vector until intersecting height map
 	//	-> determine precise intersection point, return resulting coordinate
-	
-	// done
-	return coord;
+	vec3 result = coord;
+	vec3 coordEnd = coord - normalize(viewVec)/viewVec.z;
+
+	//coord.z = 1;
+	float dt = 1/float(steps);
+	for(int i = 1; i <= steps; i++)
+	{
+		vec3 coordTemp = mix(coord,coordEnd,dt*i);
+		float bumpTemp = texture(uTex_hm, coordTemp.xy).z;
+		if(coordTemp.z < bumpTemp)
+		{
+			vec3 coordBefore = mix(coord,coordEnd,dt*(i-1));
+			float bumpBefore = texture(uTex_hm, coordBefore.xy).z;
+			float param =	(coordBefore.z - bumpBefore) /
+									((coordTemp.z - coordBefore.z) - (bumpTemp-bumpBefore));
+			result = mix(coordBefore,coordTemp,param);
+
+			//DEBUGGING
+			result = viewVec;
+
+			break;
+		}
+	}
+
+
+	return result;
 }
 
 void main()
@@ -84,16 +107,12 @@ void main()
 	// view-space view vector
 	vec4 viewVec = normalize(kEyePos - pos_view);
 	
-	// ****TO-DO:
+	// ****DONE:
 	//	-> convert view vector into tangent space
 	//		(hint: the above TBN bases convert tangent to view, figure out 
 	//		an efficient way of representing the required matrix operation)
 	// tangent-space view vector
-	vec3 viewVec_tan = vec3(
-		0.0,
-		0.0,
-		0.0
-	);
+	vec3 viewVec_tan = (inverse(vTangentBasis_view)*viewVec).xyz;
 	
 	// parallax occlusion mapping
 	vec3 texcoord = vec3(vTexcoord_atlas.xy, uSize);
@@ -123,5 +142,6 @@ void main()
 	rtFragNormal = vec4(nrm_view.xyz * 0.5 + 0.5, 1.0);
 	
 	// DEBUGGING
-	//rtFragColor.rgb = texcoord;
+	rtFragColor = texture(uTex_dm, texcoord.xy);
+	rtFragColor.rgb = texcoord;
 }
