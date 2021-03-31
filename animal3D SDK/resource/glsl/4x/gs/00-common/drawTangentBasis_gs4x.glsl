@@ -50,14 +50,15 @@ in vbVertexData {
 	vec4 vTexcoord_atlas;
 } vVertexData[];
 
-uniform vec4[] uColor0; //wireframe color
+uniform vec4[] uColor0; // default colors from the cpu
+uniform float uSize;	// length of the tangent lines
+uniform int uFlag;      
+
 
 out vec4 vColor;
 
 void drawWireFrame()
 {
-
-	//gl_in[].gl_position
 
 	vColor = uColor0[5];
 	gl_Position = gl_in[0].gl_Position;
@@ -79,9 +80,67 @@ void drawWireFrame()
 	EmitVertex();
 	gl_Position = gl_in[0].gl_Position;
 	EmitVertex();
+	EndPrimitive(); 
+}
+
+void drawTangentBasis()
+{	
+
+//	vec4 tan_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[0]);
+//	vec4 bit_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[1]);
+//	vec4 nrm_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[2]);
+
+	vec4 tan_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[0]);
+	vec4 bit_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[1]);
+	vec4 nrm_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[2]);
+
+	vec4 offset = vec4(uSize, 0.0, 0.0, 1.0);
+	vColor = uColor0[0];
+	gl_Position = gl_in[0].gl_Position;
+	EmitVertex();
+	gl_Position = ( gl_in[0].gl_Position + nrm_view );
+	EmitVertex();
+	EndPrimitive();
+
+	offset = vec4(0.0, uSize, 0.0, 0.0);
+	vColor = uColor0[8];
+	gl_Position = gl_in[0].gl_Position;
+	EmitVertex();
+	gl_Position = ( gl_in[0].gl_Position + bit_view  );
+	EmitVertex();
+	EndPrimitive();
+
+	offset = vec4(0.0, 0.0, uSize, 0.0);
+	vColor = uColor0[16];
+	gl_Position = gl_in[0].gl_Position;
+	EmitVertex();
+	gl_Position = ( gl_in[0].gl_Position + (tan_view ) );
+	EmitVertex();
+	EndPrimitive();
+
+//	offset = vec4(0.0, uSize, 0.0, 0.0);
+//	vColor = uColor0[8];
+//	gl_Position = gl_in[0].gl_Position;
+//	EmitVertex();
+//	gl_Position = gl_in[0].gl_Position + (vVertexData[gl_InvocationID].vTangentBasis_view * offset);
+//	EmitVertex();
+//	EndPrimitive();
+//
+//	offset = vec4(0.0, 0.0, uSize, 0.0);
+//	vColor = uColor0[16];
+//	gl_Position = gl_in[0].gl_Position;
+//	EmitVertex();
+//	gl_Position = gl_in[0].gl_Position + (offset * vVertexData[gl_InvocationID].vTangentBasis_view);
+//	EmitVertex();
+//	EndPrimitive();
+	
+	
 }
 
 void main()
 {
-	drawWireFrame();
+	if (uFlag > 4)
+		drawWireFrame();
+	if (uFlag == 7 || uFlag == 3)
+		drawTangentBasis();
 }
