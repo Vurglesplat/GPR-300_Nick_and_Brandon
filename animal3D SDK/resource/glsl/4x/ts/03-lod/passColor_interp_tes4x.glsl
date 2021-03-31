@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****DONE: 
 //	-> declare uniform block for spline waypoint and handle data
 //	-> implement spline interpolation algorithm based on scene object's path
 //	-> interpolate along curve using correct inputs and project result
@@ -51,6 +51,19 @@ uniform mat4 uP;
 
 out vec4 vColor;
 
+vec4 catmullRomInterpolationVec4(vec4 prev, vec4 start, vec4 end, vec4 next, float param)
+{
+	float param2 = pow(param,2);
+	float param3 = pow(param,3);
+
+	return .5f * (
+					(-param + 2*param2 - param3)*prev +
+					(2 - 5*param2 + 3*param3)*start +
+					(param + 4*param2 - 3*param3)*end +
+					(-param2+param3)*next
+				 );
+}
+
 void main()
 {
 		// a series of 0-1 values that tell you the type of shape that you are dealing with
@@ -62,24 +75,28 @@ void main()
 	// gl_TessCoord[1] = 0
 	
 	//indices
-	int current = gl_PrimitiveID; // he uses i0
-	int destination = (current + 1) % uCount; // he uses i1
+	int current = gl_PrimitiveID;
+	int destination = (current + 1) % uCount;
+	int previous = (current + uCount - 1) % uCount;
+	int next = (destination + 1) % uCount;
 	float u = gl_TessCoord[0];
 
-
-	//vec4 position = vec4(gl_TessCoord[0], 0.0, -1.0, 1.0);
-	vec4 position = mix( //he just called this p
+	vec4 position = catmullRomInterpolationVec4(
+		uCurveWaypoint[previous],
 		uCurveWaypoint[current],
 		uCurveWaypoint[destination],
-		u // you can change the color with this var
-		);	
-
+		uCurveWaypoint[next],
+		u
+		);
+	
 
 	// the projection matrix places it in the scene
 	gl_Position = uP * position;
 	
+	vec4 startCol = vec4(1.0,0.5,0.0,1.0);
+	vec4 endCol = vec4(0.0,0.5,1.0,1.0);
 	
-	vColor = vec4(0.5, 0.5, u, 1.0); //this one also change the color
+	vColor = mix(startCol,endCol,u); //this one also change the color
 	
 	
 	
