@@ -53,13 +53,28 @@ void a3curves_update_animation(a3_DemoState* demoState, a3_DemoMode3_Curves* dem
 	{
 		a3_SceneObjectData* sceneObjectData = demoMode->obj_teapot->dataPtr;
 
-		// ****TO-DO: 
+		// ****DONE: 
 		//	-> interpolate teapot's position using algorithm that matches path drawn
 		//		(hint: use the one that looks the best)
 		//	-> update the animation timer
 		//		(hint: check if we've surpassed the segment's duration)
 		// teapot follows curved path
 
+
+		demoMode->curveSegmentTime += (a3f32)dt;
+		if (demoMode->curveSegmentTime >= demoMode->curveSegmentDuration)
+		{
+			demoMode->curveSegmentTime -= demoMode->curveSegmentDuration;
+			demoMode->curveSegmentIndex = (demoMode->curveSegmentIndex + 1) % demoMode->curveWaypointCount;
+		}
+		demoMode->curveSegmentParam = demoMode->curveSegmentTime / demoMode->curveSegmentDuration;
+
+		a3ui32 startIndex = demoMode->curveSegmentIndex;
+		a3ui32 endIndex = (startIndex + 1) % demoMode->curveWaypointCount;
+		a3ui32 prevIndex = (startIndex - 1 + demoMode->curveWaypointCount) % demoMode->curveWaypointCount;
+		a3ui32 nextIndex = (endIndex + 1) % demoMode->curveWaypointCount;
+
+		a3real4CatmullRom(sceneObjectData->position.v, demoMode->curveWaypoint[prevIndex].v, demoMode->curveWaypoint[startIndex].v, demoMode->curveWaypoint[endIndex].v, demoMode->curveWaypoint[nextIndex].v, demoMode->curveSegmentParam);
 	}
 }
 
