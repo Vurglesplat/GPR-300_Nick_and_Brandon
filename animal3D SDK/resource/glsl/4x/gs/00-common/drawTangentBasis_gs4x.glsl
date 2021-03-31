@@ -50,6 +50,8 @@ in vbVertexData {
 	vec4 vTexcoord_atlas;
 } vVertexData[];
 
+uniform vec4[] uColor0; //wireframe color
+
 out vec4 vColor;
 
 void drawWireFrame()
@@ -57,14 +59,14 @@ void drawWireFrame()
 
 	//gl_in[].gl_position
 
-	vColor = vec4(1.0, 0.0, 0.0, 1.0);
+	vColor = uColor0[5];
 	gl_Position = gl_in[0].gl_Position;
 	EmitVertex();
 	gl_Position = gl_in[1].gl_Position;
 	EmitVertex();
 	EndPrimitive(); // this brings back the solid edges after a sequence of verteces
 
-	vColor = vec4(0.0, 1.0, 0.0, 1.0);
+	vColor = uColor0[5];
 	gl_Position = gl_in[1].gl_Position;
 	EmitVertex();
 	gl_Position = gl_in[2].gl_Position;
@@ -72,7 +74,7 @@ void drawWireFrame()
 	EndPrimitive(); 
 
 
-	vColor = vec4(0.0, 0.0, 1.0, 1.0);
+	vColor = uColor0[5];
 	gl_Position = gl_in[2].gl_Position;
 	EmitVertex();
 	gl_Position = gl_in[0].gl_Position;

@@ -45,7 +45,6 @@ out vbVertexData_tess {
 	vec4 vTexcoord_atlas;
 } vVertexData_tess[];
 
-
 uniform vec3 uLevelOuter;
 uniform float uLevelInner;
 
