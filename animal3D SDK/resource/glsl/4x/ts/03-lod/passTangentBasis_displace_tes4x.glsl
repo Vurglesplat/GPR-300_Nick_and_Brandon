@@ -53,13 +53,6 @@ const float size = .1; //uSize was negligable so this const is used instead to t
 
 void main()
 {
-	//copy varying data from input to output
-    vVertexData.vTangentBasis_view = vVertexData_tess[gl_PrimitiveID].vTangentBasis_view;
-    vVertexData.vTexcoord_atlas = vVertexData_tess[gl_PrimitiveID].vTexcoord_atlas;
-
-	// used to determine the positon
-	// gl_TessCoord -> barycentric   // represents the co-ordinates of the 
-
 	//Performing linear interpolation on the triangle
 	vVertexData.vTexcoord_atlas = vec4(0);
 	vVertexData.vTexcoord_atlas += gl_TessCoord[0] * vVertexData_tess[0].vTexcoord_atlas;
