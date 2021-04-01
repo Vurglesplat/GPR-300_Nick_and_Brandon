@@ -53,7 +53,7 @@ in vbVertexData {
 uniform vec4[] uColor0; // default colors from the cpu
 uniform float uSize;	// length of the tangent lines
 uniform int uFlag;      
-
+uniform mat4 uMVP;
 
 out vec4 vColor;
 
@@ -61,85 +61,94 @@ void drawWireFrame()
 {
 
 	vColor = uColor0[5];
-	gl_Position = gl_in[0].gl_Position;
+	gl_Position = uMVP *gl_in[0].gl_Position;
 	EmitVertex();
-	gl_Position = gl_in[1].gl_Position;
+	gl_Position = uMVP *gl_in[1].gl_Position;
 	EmitVertex();
-	EndPrimitive(); // this brings back the solid edges after a sequence of verteces
+	EndPrimitive(); // this brings the solid edges after a sequence of verteces
 
 	vColor = uColor0[5];
-	gl_Position = gl_in[1].gl_Position;
+	gl_Position = uMVP *gl_in[1].gl_Position;
 	EmitVertex();
-	gl_Position = gl_in[2].gl_Position;
+	gl_Position = uMVP *gl_in[2].gl_Position;
 	EmitVertex();
 	EndPrimitive(); 
 
 
 	vColor = uColor0[5];
-	gl_Position = gl_in[2].gl_Position;
+	gl_Position = uMVP *gl_in[2].gl_Position;
 	EmitVertex();
-	gl_Position = gl_in[0].gl_Position;
+	gl_Position = uMVP *gl_in[0].gl_Position;
 	EmitVertex();
 	EndPrimitive(); 
 }
 
 void drawTangentBasis()
 {	
-
-//	vec4 tan_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[0]);
-//	vec4 bit_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[1]);
-//	vec4 nrm_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[2]);
-
 	vec4 tan_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[0]);
 	vec4 bit_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[1]);
 	vec4 nrm_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[2]);
 
-	vec4 offset = vec4(uSize, 0.0, 0.0, 1.0);
+
+
+
+	vec3 temp1 = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+	vec3 temp2 = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+	vec3 faceNormal = normalize(cross(temp1,temp2));
+	vec4 faceCenter = (gl_in[0].gl_Position + gl_in[1].gl_Position + gl_in[2].gl_Position) / 3.0;
+
 	vColor = uColor0[0];
-	gl_Position = gl_in[0].gl_Position;
+	gl_Position = uMVP * faceCenter;
 	EmitVertex();
-	gl_Position = ( gl_in[0].gl_Position + nrm_view );
-	EmitVertex();
-	EndPrimitive();
-
-	offset = vec4(0.0, uSize, 0.0, 0.0);
-	vColor = uColor0[8];
-	gl_Position = gl_in[0].gl_Position;
-	EmitVertex();
-	gl_Position = ( gl_in[0].gl_Position + bit_view  );
+	gl_Position = uMVP * (faceCenter + vec4(nrm_view.xyz * uSize, 0.0) );
 	EmitVertex();
 	EndPrimitive();
 
-	offset = vec4(0.0, 0.0, uSize, 0.0);
-	vColor = uColor0[16];
-	gl_Position = gl_in[0].gl_Position;
+	vColor = uColor0[0];
+	gl_Position = uMVP * faceCenter;
 	EmitVertex();
-	gl_Position = ( gl_in[0].gl_Position + (tan_view ) );
+	gl_Position = uMVP * (faceCenter + vec4(nrm_view.xyz * uSize, 0.0) );
 	EmitVertex();
 	EndPrimitive();
 
-//	offset = vec4(0.0, uSize, 0.0, 0.0);
+	vColor = uColor0[0];
+	gl_Position = uMVP * faceCenter;
+	EmitVertex();
+	gl_Position = uMVP * (faceCenter + vec4(nrm_view.xyz * uSize, 0.0) );
+	EmitVertex();
+	EndPrimitive();
+
+//	vec4 offset = vec4(uSize, 0.0, 0.0, 1.0);
 //	vColor = uColor0[8];
-//	gl_Position = gl_in[0].gl_Position;
+//	gl_Position = uMVP * gl_in[0].gl_Position;
 //	EmitVertex();
-//	gl_Position = gl_in[0].gl_Position + (vVertexData[gl_InvocationID].vTangentBasis_view * offset);
+//	gl_Position = (uMVP *  gl_in[0].gl_Position + (tan_view) );
+//	EmitVertex();
+//	EndPrimitive();
+//
+//	offset = vec4(0.0, uSize, 0.0, 0.0);
+//	vColor = uColor0[0];
+//	gl_Position = uMVP * gl_in[0].gl_Position;
+//	EmitVertex();
+//	gl_Position = (uMVP *  gl_in[0].gl_Position + (bit_view )  );
 //	EmitVertex();
 //	EndPrimitive();
 //
 //	offset = vec4(0.0, 0.0, uSize, 0.0);
 //	vColor = uColor0[16];
-//	gl_Position = gl_in[0].gl_Position;
+//	gl_Position = uMVP * gl_in[0].gl_Position;
 //	EmitVertex();
-//	gl_Position = gl_in[0].gl_Position + (offset * vVertexData[gl_InvocationID].vTangentBasis_view);
+//	gl_Position = ( uMVP * gl_in[0].gl_Position + (nrm_view) );
 //	EmitVertex();
 //	EndPrimitive();
-	
-	
+
 }
+
+
 
 void main()
 {
-	if (uFlag > 4)
+	if (uFlag >= 4)
 		drawWireFrame();
 	if (uFlag == 7 || uFlag == 3)
 		drawTangentBasis();

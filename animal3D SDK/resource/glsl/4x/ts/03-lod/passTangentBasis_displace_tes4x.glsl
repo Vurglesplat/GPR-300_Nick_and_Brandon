@@ -33,22 +33,25 @@
 //		(hint: start by testing a "pass-thru" shader that only copies 
 //		gl_Position from the previous stage to get the hang of it)
 
-layout (triangles, equal_spacing) in; // not a real error
+layout (triangles, equal_spacing) in;
 
 
 in vbVertexData_tess {
 	mat4 vTangentBasis_view;
 	vec4 vTexcoord_atlas;
-} vVertexData_tess[];
+} vVertexData_tess[gl_MaxPatchVertices];
 
 // this is then passed to the lighting shader
 out vbVertexData {
 	mat4 vTangentBasis_view;
 	vec4 vTexcoord_atlas;
-};
+} vVertexData;
+
 
 void main()
 {
+	vVertexData.vTangentBasis_view = vVertexData_tess[gl_PrimitiveID].vTangentBasis_view;
+	vVertexData.vTexcoord_atlas = vVertexData_tess[gl_PrimitiveID].vTexcoord_atlas;
 	// used to determine the positon
 	// gl_TessCoord -> barycentric   // represents the co-ordinates of the 
 	
