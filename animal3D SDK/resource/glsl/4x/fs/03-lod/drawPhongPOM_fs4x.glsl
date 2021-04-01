@@ -65,26 +65,31 @@ vec3 calcParallaxCoord(in vec3 coord, in vec3 viewVec, const int steps)
 	//	-> determine precise intersection point, return resulting coordinate
 	vec3 result = coord;
 	
-	//coord.z = 1;
+	//coord.z = 1; //Commented out because I assumed the uSize was made the z for a reason, even if the slides have cFrag set to 1.
 
-	vec3 coordEnd = coord - viewVec/viewVec.z;
+	//Find the coord at which the viewVec would reach h = 0
+	vec3 coordEnd = coord - normalize(viewVec)/viewVec.z;
 
-	float dt = 1/float(steps);
+	//RAY-TRACING
+	float dt = 1/float(steps); //the portion of the map that each step takes 
 	for(int i = 1; i <= steps; i++)
 	{
 		vec3 coordTemp = mix(coord,coordEnd,dt*i);
 		float bumpTemp = texture(uTex_hm, coordTemp.xy).z;
-		if(coordTemp.z < bumpTemp)
+		if(coordTemp.z < bumpTemp) //STOPS when a segment's h is lower than the bump/height map's value
 		{
+			//Gets the coord and map before this one
 			vec3 coordBefore = mix(coord,coordEnd,dt*(i-1));
 			float bumpBefore = texture(uTex_hm, coordBefore.xy).z;
+
+			//Determines the intersection of the two line segments, then lerps for the result
 			float param =	(coordBefore.z - bumpBefore) /
 									((coordTemp.z - coordBefore.z) - (bumpTemp-bumpBefore));
 			result = mix(coordBefore,coordTemp,param);
 
-			//DEBUGGING
-			//result = normalize(viewVec)/2 + .5;
-			//result = coordEnd;
+			//DEBUG
+			//result = vec3(i/float(steps));
+			//result = viewVec;
 
 			break;
 		}
@@ -116,9 +121,7 @@ void main()
 	//		an efficient way of representing the required matrix operation)
 	// tangent-space view vector
 	vec3 viewVec_tan;
-	viewVec_tan = (inverse(vTangentBasis_view)*viewVec).xyz;
-	viewVec_tan = (inverse(mat4(tan_view, bit_view, nrm_view, kEyePos))*viewVec).xyz;
-	//viewVec_tan = vec3(1,1,1);
+	viewVec_tan = (transpose(inverse(mat4(tan_view, bit_view, nrm_view, kEyePos)))*viewVec).xyz;
 	
 	// parallax occlusion mapping
 	vec3 texcoord = vec3(vTexcoord_atlas.xy, uSize);
@@ -149,5 +152,5 @@ void main()
 	
 	// DEBUGGING
 	//rtFragColor = texture(uTex_dm, texcoord.xy);
-	//rtFragColor.rgb = texcoord;
+	//rtFragColor.rgb = normalize(texcoord).xyz/2 +.5;
 }
