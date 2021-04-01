@@ -47,6 +47,8 @@ layout (location = 11) in vec3 aBitangent;
 //  -> leftover attrib: texcoord
 
 // not morph target: textcoord, bitangent
+//  -> tc is common attribute
+//  -> bit is cross of nrm and tan
 
 
 struct sModelMatrixStack
