@@ -83,73 +83,144 @@ void drawWireFrame()
 	EndPrimitive(); 
 }
 
-void drawTangentBasis()
+void drawFaceTangents()
 {	
 	vec4 tan_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[0]);
 	vec4 bit_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[1]);
 	vec4 nrm_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[2]);
 
 
-
-
-	vec3 temp1 = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
-	vec3 temp2 = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
-	vec3 faceNormal = normalize(cross(temp1,temp2));
+	vec3 DeltaP1 = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+	vec3 DeltaP2 = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+	vec3 faceNormal = normalize(cross(DeltaP2,DeltaP1));
 	vec4 faceCenter = (gl_in[0].gl_Position + gl_in[1].gl_Position + gl_in[2].gl_Position) / 3.0;
 
-	vColor = uColor0[0];
+	vColor = uColor0[16];
 	gl_Position = uMVP * faceCenter;
 	EmitVertex();
-	gl_Position = uMVP * (faceCenter + vec4(nrm_view.xyz * uSize, 0.0) );
+	gl_Position = uMVP * (faceCenter + vec4(faceNormal * uSize * 3.0, 0.0) );
+	EmitVertex();
+	EndPrimitive();
+	
+	mat2x3 P1P2 = mat2x3(DeltaP1.x, DeltaP2.x,
+						 DeltaP1.y, DeltaP2.y,
+						 DeltaP1.z, DeltaP2.z);
+	
+	vec2 DeltaUV1 = gl_in[1].gl_Position.xy - gl_in[0].gl_Position.xy;
+	vec2 DeltaUV2 = gl_in[2].gl_Position.xy - gl_in[0].gl_Position.xy;
+
+	mat2 UV1UV2 = mat2  (DeltaUV1.x, DeltaUV2.x,
+						 DeltaUV1.y, DeltaUV2.y);
+
+	mat2x3 Tangent_Bitan = P1P2  * inverse(UV1UV2);
+
+	vColor = uColor0[8];
+	gl_Position = uMVP * faceCenter;
+	EmitVertex();
+	gl_Position = uMVP * (faceCenter + vec4(/*Tangent_Bitan[0]*/ tan_view.xyz * uSize * 3.0, 0.0) );
 	EmitVertex();
 	EndPrimitive();
 
 	vColor = uColor0[0];
 	gl_Position = uMVP * faceCenter;
 	EmitVertex();
-	gl_Position = uMVP * (faceCenter + vec4(nrm_view.xyz * uSize, 0.0) );
+	gl_Position = uMVP * (faceCenter + vec4(/*Tangent_Bitan[1]*/ bit_view.xyz * uSize * 3.0, 0.0) );
 	EmitVertex();
 	EndPrimitive();
 
-	vColor = uColor0[0];
-	gl_Position = uMVP * faceCenter;
-	EmitVertex();
-	gl_Position = uMVP * (faceCenter + vec4(nrm_view.xyz * uSize, 0.0) );
-	EmitVertex();
-	EndPrimitive();
 
-//	vec4 offset = vec4(uSize, 0.0, 0.0, 1.0);
-//	vColor = uColor0[8];
-//	gl_Position = uMVP * gl_in[0].gl_Position;
-//	EmitVertex();
-//	gl_Position = (uMVP *  gl_in[0].gl_Position + (tan_view) );
-//	EmitVertex();
-//	EndPrimitive();
-//
-//	offset = vec4(0.0, uSize, 0.0, 0.0);
-//	vColor = uColor0[0];
-//	gl_Position = uMVP * gl_in[0].gl_Position;
-//	EmitVertex();
-//	gl_Position = (uMVP *  gl_in[0].gl_Position + (bit_view )  );
-//	EmitVertex();
-//	EndPrimitive();
-//
-//	offset = vec4(0.0, 0.0, uSize, 0.0);
-//	vColor = uColor0[16];
-//	gl_Position = uMVP * gl_in[0].gl_Position;
-//	EmitVertex();
-//	gl_Position = ( uMVP * gl_in[0].gl_Position + (nrm_view) );
-//	EmitVertex();
-//	EndPrimitive();
 
 }
 
+void drawVertexTangents()
+{
+	vec4 tan_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[0]);
+	vec4 bit_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[1]);
+	vec4 nrm_view = normalize(vVertexData[gl_InvocationID].vTangentBasis_view[2]);
 
+			// draw tangents off of each point
+	vec4 offset = vec4(uSize, 0.0, 0.0, 1.0);
+	vColor = uColor0[8];
+	gl_Position = uMVP * gl_in[0].gl_Position;
+	EmitVertex();
+	gl_Position = (uMVP *  gl_in[0].gl_Position + (tan_view) );
+	EmitVertex();
+	EndPrimitive();
+
+	offset = vec4(0.0, uSize, 0.0, 0.0);
+	vColor = uColor0[0];
+	gl_Position = uMVP * gl_in[0].gl_Position;
+	EmitVertex();
+	gl_Position = (uMVP *  gl_in[0].gl_Position + (bit_view )  );
+	EmitVertex();
+	EndPrimitive();
+
+	offset = vec4(0.0, 0.0, uSize, 0.0);
+	vColor = uColor0[16];
+	gl_Position = uMVP * gl_in[0].gl_Position;
+	EmitVertex();
+	gl_Position = ( uMVP * gl_in[0].gl_Position + (nrm_view) );
+	EmitVertex();
+	EndPrimitive();
+
+
+	offset = vec4(uSize, 0.0, 0.0, 1.0);
+	vColor = uColor0[8];
+	gl_Position = uMVP * gl_in[1].gl_Position;
+	EmitVertex();
+	gl_Position = (uMVP *  gl_in[1].gl_Position + (tan_view) );
+	EmitVertex();
+	EndPrimitive();
+
+	offset = vec4(0.0, uSize, 0.0, 0.0);
+	vColor = uColor0[0];
+	gl_Position = uMVP * gl_in[1].gl_Position;
+	EmitVertex();
+	gl_Position = (uMVP *  gl_in[1].gl_Position + (bit_view )  );
+	EmitVertex();
+	EndPrimitive();
+
+	offset = vec4(0.0, 0.0, uSize, 0.0);
+	vColor = uColor0[16];
+	gl_Position = uMVP * gl_in[1].gl_Position;
+	EmitVertex();
+	gl_Position = ( uMVP * gl_in[1].gl_Position + (nrm_view) );
+	EmitVertex();
+	EndPrimitive();
+
+
+    offset = vec4(uSize, 0.0, 0.0, 1.0);
+	vColor = uColor0[8];
+	gl_Position = uMVP * gl_in[2].gl_Position;
+	EmitVertex();
+	gl_Position = (uMVP *  gl_in[2].gl_Position + (tan_view) );
+	EmitVertex();
+	EndPrimitive();
+
+	offset = vec4(0.0, uSize, 0.0, 0.0);
+	vColor = uColor0[0];
+	gl_Position = uMVP * gl_in[2].gl_Position;
+	EmitVertex();
+	gl_Position = (uMVP *  gl_in[2].gl_Position + (bit_view )  );
+	EmitVertex();
+	EndPrimitive();
+
+	offset = vec4(0.0, 0.0, uSize, 0.0);
+	vColor = uColor0[16];
+	gl_Position = uMVP * gl_in[2].gl_Position;
+	EmitVertex();
+	gl_Position = ( uMVP * gl_in[2].gl_Position + (nrm_view) );
+	EmitVertex();
+	EndPrimitive();
+}
 
 void main()
 {
 	if (uFlag >= 4)
 		drawWireFrame();
 	if (uFlag == 7 || uFlag == 3)
-		drawTangentBasis();
+	{
+		drawFaceTangents();
+		drawVertexTangets();
+	}
 }
