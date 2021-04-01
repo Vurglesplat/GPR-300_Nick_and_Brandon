@@ -221,6 +221,6 @@ void main()
 	if (uFlag == 7 || uFlag == 3)
 	{
 		drawFaceTangents();
-		drawVertexTangets();
+		drawVertexTangents();
 	}
 }
