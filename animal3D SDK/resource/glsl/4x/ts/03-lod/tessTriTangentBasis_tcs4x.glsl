@@ -45,7 +45,6 @@ out vbVertexData_tess {
 	vec4 vTexcoord_atlas;
 } vVertexData_tess[];
 
-
 uniform vec3 uLevelOuter;
 uniform float uLevelInner;
 
@@ -58,5 +57,7 @@ gl_TessLevelOuter[0] = uLevelOuter[0];
 gl_TessLevelOuter[1] = uLevelOuter[1];
 gl_TessLevelOuter[2] = uLevelOuter[2];	
 gl_TessLevelInner[0] = uLevelInner;	
+
+gl_out[gl_InvocationID].gl_Position =gl_in[gl_InvocationID].gl_Position;
 
 }
