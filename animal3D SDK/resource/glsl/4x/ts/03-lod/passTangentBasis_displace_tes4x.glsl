@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****DONE: 
 //	-> declare inbound and outbound varyings to pass along vertex data
 //		(hint: inbound matches TCS naming and is still an array)
 //		(hint: outbound matches GS/FS naming and is singular)
@@ -33,9 +33,7 @@
 //		(hint: start by testing a "pass-thru" shader that only copies 
 //		gl_Position from the previous stage to get the hang of it)
 
-layout (triangles, equal_spacing) in; // not a real error
-
-uniform mat4 uP;
+layout (triangles, equal_spacing) in;
 
 in vbVertexData_tess {
     mat4 vTangentBasis_view;
@@ -48,10 +46,10 @@ out vbVertexData {
     vec4 vTexcoord_atlas;
 } vVertexData;
 
-uniform int uCount;
-
 uniform sampler2D uTex_hm;
-uniform float uSize;
+uniform mat4 uP;
+
+const float size = .1; //uSize was negligable so this const is used instead to try to match
 
 void main()
 {
@@ -62,6 +60,7 @@ void main()
 	// used to determine the positon
 	// gl_TessCoord -> barycentric   // represents the co-ordinates of the 
 
+	//Performing linear interpolation on the triangle
 	vVertexData.vTexcoord_atlas = vec4(0);
 	vVertexData.vTexcoord_atlas += gl_TessCoord[0] * vVertexData_tess[0].vTexcoord_atlas;
 	vVertexData.vTexcoord_atlas += gl_TessCoord[1] * vVertexData_tess[1].vTexcoord_atlas;
@@ -77,7 +76,8 @@ void main()
 	pos += gl_TessCoord[1] * gl_in[1].gl_Position;
 	pos += gl_TessCoord[2] * gl_in[2].gl_Position;
 
-	pos += uP * normalize(vVertexData.vTangentBasis_view[2]) * texture(uTex_hm, vVertexData.vTexcoord_atlas.xy).r * .1;
+	//displace surface along normal using height map
+	pos += uP * normalize(vVertexData.vTangentBasis_view[2]) * texture(uTex_hm, vVertexData.vTexcoord_atlas.xy).r * size;
 
-	gl_Position = pos;//uP * vVertexData.vTangentBasis_view * vVertexData.vTexcoord_atlas;//vVertexData.vTexcoord_atlas;
+	gl_Position = pos;
 }

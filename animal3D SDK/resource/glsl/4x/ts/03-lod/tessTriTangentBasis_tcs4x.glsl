@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****DONE: 
 //	-> declare inbound and outbound varyings to pass along vertex data
 //		(hint: inbound matches VS naming but is now an array)
 //		(hint: outbound matches TES naming and is also an array)
