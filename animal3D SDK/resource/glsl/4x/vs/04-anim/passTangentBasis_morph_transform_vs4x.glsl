@@ -50,6 +50,17 @@ layout (location = 11) in vec3 aBitangent;
 //  -> tc is common attribute
 //  -> bit is cross of nrm and tan
 
+struct sMorphTarget
+{
+	vec4 position;
+	vec3 normal; float nPad;
+	vec3 tangent; float tPad;
+};
+
+layout (location = 0) in abMorphTarget
+{
+	sMorphTarget aMorphTarget[5];
+};
 
 struct sModelMatrixStack
 {
