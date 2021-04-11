@@ -61,6 +61,7 @@ layout (location = 0) in abMorphTarget
 {
 	sMorphTarget aMorphTarget[5];
 };
+layout (location = 16) in vec4 aTexcoord;
 
 struct sModelMatrixStack
 {

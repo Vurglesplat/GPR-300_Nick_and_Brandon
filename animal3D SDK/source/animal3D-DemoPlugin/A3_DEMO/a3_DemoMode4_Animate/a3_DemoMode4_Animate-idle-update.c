@@ -80,10 +80,14 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 
 			// ****TO-DO:
 			// interpolate channels
+			a3real4Lerp(tmpPose.euler.v, p0->euler.v, p1->euler.v, u);
+			a3real4Lerp(tmpPose.position.v, p0->position.v, p1->position.v, u);
+			a3real4Lerp(tmpPose.scale.v, p0->scale.v, p1->scale.v, u);
+			//a3lerp(tmpPose.scaleMode, p0->scaleMode, p1->scaleMode, u); uses an enum so probably can't be converted!
 
 			// ****TO-DO:
 			// concatenate base pose
-
+			
 			// ****TO-DO:
 			// convert to matrix
 
