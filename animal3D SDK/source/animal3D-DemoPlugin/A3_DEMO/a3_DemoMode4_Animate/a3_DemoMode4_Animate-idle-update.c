@@ -87,10 +87,27 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 
 			// ****TO-DO:
 			// concatenate base pose
-			
+			a3real4Add(tmpPose.position.v, pBase->position.v);
+			a3real4Add(tmpPose.euler.v, pBase->euler.v);
+			a3real4MulComp(tmpPose.scale.v, pBase->scale.v);
+
 			// ****TO-DO:
 			// convert to matrix
+			a3mat4 rot, scale, translate;
 
+			a3real4x4SetIdentity(localSpaceArray->m);
+			a3real4x4SetRotateXYZ(rot.m, tmpPose.euler.x, tmpPose.euler.y, tmpPose.euler.z);
+			a3real4x4Set(scale.m,	tmpPose.scale.x, 0, 0, 0,
+									0, tmpPose.scale.y, 0, 0,
+									0, 0, tmpPose.scale.z, 0,
+									0, 0, 0, 1);
+			a3real4x4Set(translate.m,	1,0,0,tmpPose.position.x,
+										0,1,0,tmpPose.position.y,
+										0,0,1,tmpPose.position.z,
+										0,0,0,1);
+			a3real4x4ConcatL(localSpaceArray->m,translate.m);
+			a3real4x4ConcatL(localSpaceArray->m,rot.m);
+			a3real4x4ConcatL(localSpaceArray->m,scale.m);
 		}
 
 		// done
