@@ -57,11 +57,9 @@ struct sMorphTarget
 	vec3 tangent; float tPad;
 };
 
-layout (location = 0) in abMorphTarget
-{
-	sMorphTarget aMorphTarget[5];
-};
-layout (location = 16) in vec4 aTexcoord;
+layout (location = 0) in sMorphTarget aMorphTarget[5];
+
+layout (location = 15) in vec4 aTexcoord;
 
 struct sModelMatrixStack
 {
@@ -98,6 +96,12 @@ void main()
 	vec3 aTangent, aBitangent, aNormal;
 
 	//testing : copy first morph target
+	aPosition = aMorphTarget[0].position;
+	aTangent = aMorphTarget[0].tangent;
+	aNormal = aMorphTarget[0].normal;	
+	aBitangent = cross( aNormal, aTangent );
+
+	//vec4 aTexcoord = vec4(1.0f,1.0f,1.0f,1.0f);
 
 
 
