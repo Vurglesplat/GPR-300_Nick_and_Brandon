@@ -53,8 +53,8 @@ layout (location = 11) in vec3 aBitangent;
 struct sMorphTarget
 {
 	vec4 position;
-	vec3 normal; float nPad;
-	vec3 tangent; float tPad;
+	vec4 normal;
+	vec4 tangent;
 };
 
 layout (location = 0) in sMorphTarget aMorphTarget[5];
@@ -96,9 +96,9 @@ void main()
 	vec3 aTangent, aBitangent, aNormal;
 
 	//testing : copy first morph target
-	aPosition = aMorphTarget[0].position;
-	aTangent = aMorphTarget[0].tangent;
-	aNormal = aMorphTarget[0].normal;	
+	aPosition = aMorphTarget[2].position;
+	aTangent = aMorphTarget[2].tangent.xyz;
+	aNormal = aMorphTarget[2].normal.xyz;	
 	aBitangent = cross( aNormal, aTangent );
 
 	//vec4 aTexcoord = vec4(1.0f,1.0f,1.0f,1.0f);
