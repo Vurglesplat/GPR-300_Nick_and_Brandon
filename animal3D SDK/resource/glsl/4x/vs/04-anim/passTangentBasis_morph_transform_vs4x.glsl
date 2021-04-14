@@ -34,14 +34,6 @@
 //		(hint: results can be stored in local variables named after the 
 //		complete tangent basis attributes provided before any changes)
 
-/*
-layout (location = 0) in vec4 aPosition;
-layout (location = 2) in vec3 aNormal;
-layout (location = 8) in vec4 aTexcoord;
-layout (location = 10) in vec3 aTangent;
-layout (location = 11) in vec3 aBitangent;
-*/
-
 // signle morph target: position, normal, tangent
 //  -> we can have 5 targets: 16 total attribs / 3 per target
 //  -> leftover attrib: texcoord
@@ -53,12 +45,11 @@ layout (location = 11) in vec3 aBitangent;
 struct sMorphTarget
 {
 	vec4 position;
-	vec3 normal; float nPad;
-	vec3 tangent; float tPad;
+	vec4 normal;
+	vec4 tangent;
 };
 
 layout (location = 0) in sMorphTarget aMorphTarget[5];
-
 layout (location = 15) in vec4 aTexcoord;
 
 struct sModelMatrixStack
@@ -79,6 +70,10 @@ uniform ubTransformStack
 };
 uniform int uIndex;
 
+//confirmed to be the keyframe by line 294 of a3_DemoMode4_Animate-idle-render.c
+//const a3f32 keyframeTime = (a3f32)demoMode->animMorphTeapot->index + demoMode->animMorphTeapot->param;
+uniform float uTime; 
+
 out vbVertexData {
 	mat4 vTangentBasis_view;
 	vec4 vTexcoord_atlas;
@@ -88,22 +83,18 @@ flat out int vVertexID;
 flat out int vInstanceID;
 
 void main()
-{
-	// DUMMY OUTPUT: directly assign input position to output position
-	//gl_Position = aPosition;
-	
+{	
 	vec4 aPosition;
 	vec3 aTangent, aBitangent, aNormal;
 
-	//testing : copy first morph target
-	aPosition = aMorphTarget[0].position;
-	aTangent = aMorphTarget[0].tangent;
-	aNormal = aMorphTarget[0].normal;	
+	int keyFrameIndex = int(uTime);
+	int nextKeyFrameIndex = (keyFrameIndex+1) % 5;
+	float param = uTime - floor(uTime);
+
+	aPosition = mix(aMorphTarget[keyFrameIndex].position,aMorphTarget[nextKeyFrameIndex].position,param);
+	aTangent = mix(aMorphTarget[keyFrameIndex].tangent,aMorphTarget[nextKeyFrameIndex].tangent,param).xyz;
+	aNormal = mix(aMorphTarget[keyFrameIndex].normal,aMorphTarget[nextKeyFrameIndex].normal,param).xyz;
 	aBitangent = cross( aNormal, aTangent );
-
-	//vec4 aTexcoord = vec4(1.0f,1.0f,1.0f,1.0f);
-
-
 
 	sModelMatrixStack t = uModelMatrixStack[uIndex];
 	
