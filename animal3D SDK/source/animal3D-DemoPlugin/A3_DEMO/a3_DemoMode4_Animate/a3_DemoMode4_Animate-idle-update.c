@@ -78,20 +78,20 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 			// testing: copy base pose
 			tmpPose = *pBase;
 
-			// ****TO-DO:
+			// ****DONE:
 			// interpolate channels
 			a3real4Lerp(tmpPose.euler.v, p0->euler.v, p1->euler.v, u);
 			a3real4Lerp(tmpPose.position.v, p0->position.v, p1->position.v, u);
 			a3real4Lerp(tmpPose.scale.v, p0->scale.v, p1->scale.v, u);
 			//a3lerp(tmpPose.scaleMode, p0->scaleMode, p1->scaleMode, u); uses an enum so probably can't be converted!
 
-			// ****TO-DO:
+			// ****DONE:
 			// concatenate base pose
 			a3real4Add(tmpPose.position.v, pBase->position.v);
 			a3real4Add(tmpPose.euler.v, pBase->euler.v);
 			a3real4MulComp(tmpPose.scale.v, pBase->scale.v);
 
-			// ****TO-DO:
+			// ****DONE:
 			// convert to matrix
 			a3mat3 rot, scale;
 
@@ -140,7 +140,7 @@ inline int a3animate_updateSkeletonObjectSpace(a3_Hierarchy const* hierarchy,
 {
 	if (hierarchy && objectSpaceArray && localSpaceArray)
 	{
-		// ****TO-DO: 
+		// ****DONE: 
 		// forward kinematics
 		a3ui32 j;
 		a3i32 jp;
