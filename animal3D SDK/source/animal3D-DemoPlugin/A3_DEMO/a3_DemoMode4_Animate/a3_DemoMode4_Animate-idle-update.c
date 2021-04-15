@@ -17,7 +17,7 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
-	
+
 	a3_DemoMode4_Animate-idle-update.c
 	Demo mode implementations: animation scene.
 
@@ -70,7 +70,7 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 		a3f32 u = keyCtrl->param;
 		a3_SceneObjectData const* p0 = keyPoseArray[i0 + 1], * p1 = keyPoseArray[i1 + 1], * pBase = keyPoseArray[0];
 		a3_SceneObjectData tmpPose;
-		
+
 		for (j = 0;
 			j < hierarchy->numNodes;
 			++j, ++p0, ++p1, ++pBase, ++localSpaceArray)
@@ -93,23 +93,40 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 
 			//// ****TO-DO:
 			//// convert to matrix
-			a3mat4 rot, scale, translate;
+			a3mat3 rot, scale;
 
-			a3real4x4SetIdentity(localSpaceArray->m);
+			//credits to Game Engine book by Jason Gregory
 
-			a3real4x4SetRotateXYZ(rot.m, tmpPose.euler.x, tmpPose.euler.y, tmpPose.euler.z);
-			a3real4x4Set(scale.m,	tmpPose.scale.x, 0, 0, 0,
-									0, tmpPose.scale.y, 0, 0,
-									0, 0, tmpPose.scale.z, 0,
-									0, 0, 0, 1);
-			a3real4x4Set(translate.m,	1,0,0,tmpPose.position.x,
-										0,1,0,tmpPose.position.y,
-										0,0,1,tmpPose.position.z,
-										0,0,0,1);
+			a3real3x3SetRotateXYZ(rot.m, tmpPose.euler.x, tmpPose.euler.y, tmpPose.euler.z);
+			a3real3x3Set(scale.m, tmpPose.scale.x, 0, 0,
+				                  0, tmpPose.scale.y, 0,
+				                  0, 0, tmpPose.scale.z);
 
-			a3real4x4Concat(localSpaceArray->m, scale.m);
-			a3real4x4Concat(localSpaceArray->m, rot.m);
-			a3real4x4Concat(localSpaceArray->m, translate.m);
+			a3real3x3Concat(rot.m, scale.m);
+			a3real4x4Set(localSpaceArray->m, scale.m00, scale.m10, scale.m20, tmpPose.position.x,
+				                             scale.m01, scale.m11, scale.m21, tmpPose.position.z,
+				                             scale.m02, scale.m12, scale.m22, tmpPose.position.y,
+                               				 0, 0, 0, 1);
+			a3real4x4Transpose(localSpaceArray->m);
+
+
+			//a3mat4 rot, scale, translate;
+
+			//a3real4x4SetIdentity(localSpaceArray[j].m);
+
+			//a3real4x4SetRotateXYZ(rot.m, pBase[j].euler.x, pBase[j].euler.y, pBase[j].euler.z);
+			//a3real4x4Set(scale.m, pBase[j].scale.x, 0, 0, 0,
+			//	0, pBase[j].scale.y, 0, 0,
+			//	0, 0, pBase[j].scale.z, 0,
+			//	0, 0, 0, 1);
+			//a3real4x4Set(translate.m, 1, 0, 0, pBase[j].position.x,
+			//	0, 1, 0, pBase[j].position.y,
+			//	0, 0, 1, pBase[j].position.z,
+			//	0, 0, 0, 1);
+
+			//a3real4x4ConcatL(localSpaceArray[j].m, scale.m);
+			//a3real4x4ConcatL(localSpaceArray[j].m, rot.m);
+			//a3real4x4ConcatL(localSpaceArray[j].m, translate.m);
 		}
 
 		// done
@@ -125,21 +142,23 @@ inline int a3animate_updateSkeletonObjectSpace(a3_Hierarchy const* hierarchy,
 	{
 		// ****TO-DO: 
 		// forward kinematics
-		a3ui32 j; 
-		a3i32 jp; 
-
-
-		a3real4x4SetIdentity(objectSpaceArray[0].m);
-		a3real4x4Concat(objectSpaceArray[0].m, localSpaceArray[0].m);   // handle the root object
-
-		for (j = 1, jp = hierarchy->nodes[j].parentIndex;
+		a3ui32 j;
+		a3i32 jp;
+		
+		for (j = 0;
 			j < hierarchy->numNodes;
-			++j, jp = hierarchy->nodes[j].parentIndex)
+			++j)
 		{
-			a3real4x4SetIdentity(objectSpaceArray[j].m);
-			a3real4x4Concat(objectSpaceArray[j].m, objectSpaceArray[jp].m);
-			//a3real4x4Set(objectSpaceArray[j].m, objectSpaceArray[jp].m);
-			a3real4x4Concat(objectSpaceArray[j].m, localSpaceArray[j].m);
+			jp = hierarchy->nodes[j].parentIndex;
+
+			if (jp == -1)
+				a3real4x4SetReal4x4(objectSpaceArray[j].m, localSpaceArray[j].m);   // handle the root object
+			else
+			{
+				a3real4x4SetReal4x4(objectSpaceArray[j].m, localSpaceArray[j].m);
+				//a3real4x4Set(objectSpaceArray[j].m, objectSpaceArray[jp].m);
+				a3real4x4Concat(objectSpaceArray[jp].m, objectSpaceArray[j].m);
+			}
 		}
 
 		// done
@@ -300,6 +319,3 @@ void a3animate_update(a3_DemoState* demoState, a3_DemoMode4_Animate* demoMode, a
 	// prepare and upload graphics data
 	a3animate_update_graphics(demoState, demoMode);
 }
-
-
-//-----------------------------------------------------------------------------
