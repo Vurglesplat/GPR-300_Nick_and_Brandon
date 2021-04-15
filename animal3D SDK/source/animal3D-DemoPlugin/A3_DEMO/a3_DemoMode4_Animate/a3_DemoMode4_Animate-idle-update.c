@@ -95,7 +95,7 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 			// convert to matrix
 			a3mat3 rot, scale;
 
-			//credits to Game Engine book by Jason Gregory
+			//credits to the Game Engine book by Jason Gregory
 
 			a3real3x3SetRotateXYZ(rot.m, tmpPose.euler.x, tmpPose.euler.y, tmpPose.euler.z);
 			a3real3x3Set(scale.m, tmpPose.scale.x, 0, 0,
@@ -108,25 +108,6 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 				                             scale.m02, scale.m12, scale.m22, tmpPose.position.y,
                                				 0, 0, 0, 1);
 			a3real4x4Transpose(localSpaceArray->m);
-
-
-			//a3mat4 rot, scale, translate;
-
-			//a3real4x4SetIdentity(localSpaceArray[j].m);
-
-			//a3real4x4SetRotateXYZ(rot.m, pBase[j].euler.x, pBase[j].euler.y, pBase[j].euler.z);
-			//a3real4x4Set(scale.m, pBase[j].scale.x, 0, 0, 0,
-			//	0, pBase[j].scale.y, 0, 0,
-			//	0, 0, pBase[j].scale.z, 0,
-			//	0, 0, 0, 1);
-			//a3real4x4Set(translate.m, 1, 0, 0, pBase[j].position.x,
-			//	0, 1, 0, pBase[j].position.y,
-			//	0, 0, 1, pBase[j].position.z,
-			//	0, 0, 0, 1);
-
-			//a3real4x4ConcatL(localSpaceArray[j].m, scale.m);
-			//a3real4x4ConcatL(localSpaceArray[j].m, rot.m);
-			//a3real4x4ConcatL(localSpaceArray[j].m, translate.m);
 		}
 
 		// done
@@ -156,7 +137,6 @@ inline int a3animate_updateSkeletonObjectSpace(a3_Hierarchy const* hierarchy,
 			else
 			{
 				a3real4x4SetReal4x4(objectSpaceArray[j].m, localSpaceArray[j].m);
-				//a3real4x4Set(objectSpaceArray[j].m, objectSpaceArray[jp].m);
 				a3real4x4Concat(objectSpaceArray[jp].m, objectSpaceArray[j].m);
 			}
 		}

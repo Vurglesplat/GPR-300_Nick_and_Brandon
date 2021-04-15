@@ -42,8 +42,6 @@
 //  -> tc is common attribute
 //  -> bit is cross of nrm and tan
 
-// using vec3s with float paddings seemed to throw this off
-// for ours for whatever reason, so we switched to a vec4 for everything
 struct sMorphTarget
 {
 	vec4 position;
@@ -89,9 +87,20 @@ void main()
 	vec4 aPosition;
 	vec3 aTangent, aBitangent, aNormal;
 
+<<<<<<< HEAD
+	//testing : copy first morph target
+	aPosition = aMorphTarget[2].position;
+	aTangent = aMorphTarget[2].tangent.xyz;
+	aNormal = aMorphTarget[2].normal.xyz;	
+	aBitangent = cross( aNormal, aTangent );
+
+	//vec4 aTexcoord = vec4(1.0f,1.0f,1.0f,1.0f);
+
+=======
 	int keyFrameIndex = int(uTime);
 	int nextKeyFrameIndex = (keyFrameIndex+1) % 5;
 	float param = uTime - floor(uTime);
+>>>>>>> origin/project5-morphtargetanimation
 
 	aPosition = mix(aMorphTarget[keyFrameIndex].position,aMorphTarget[nextKeyFrameIndex].position,param);
 	aTangent = mix(aMorphTarget[keyFrameIndex].tangent,aMorphTarget[nextKeyFrameIndex].tangent,param).xyz;
